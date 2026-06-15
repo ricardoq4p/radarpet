@@ -3,375 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RadarPet — Protótipo</title>
+<title>RadarPet - App</title>
+<meta name="description" content="RadarPet em formato app para alertas, achados e perdidos, ONGs e PetMatch.">
+<meta name="theme-color" content="#FF7A2F">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="assets/icon-192.svg">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'Nunito', sans-serif;
-  background: linear-gradient(135deg, #FFF0E0 0%, #FFE8D6 100%);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 30px 16px 60px;
-}
-
-h1 {
-  font-size: 13px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: #FF9A5C;
-  font-weight: 700;
-  margin-bottom: 20px;
-}
-
-/* PHONE */
-.phone {
-  width: 340px;
-  border-radius: 40px;
-  background: #FFF8F4;
-  box-shadow: 0 24px 60px rgba(255,122,47,0.18), 0 4px 16px rgba(0,0,0,0.08);
-  overflow: hidden;
-  border: 2px solid #FFD4B5;
-  position: relative;
-}
-
-/* STATUS BAR */
-.status-bar {
-  background: #FF7A2F;
-  padding: 10px 20px 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.status-bar span { color: white; font-size: 11px; font-weight: 800; }
-
-/* HEADER */
-.header {
-  background: #FF7A2F;
-  padding: 6px 16px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.logo-wrap { display: flex; align-items: center; gap: 8px; }
-.logo-icon {
-  width: 36px; height: 36px;
-  background: white;
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-}
-.logo-text { font-size: 22px; font-weight: 900; color: white; letter-spacing: -0.5px; }
-.logo-text span { color: #FFE0C8; }
-.header-icons { display: flex; gap: 14px; }
-.header-icons svg { width: 22px; height: 22px; stroke: white; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
-/* SEARCH */
-.search-wrap {
-  background: #FF7A2F;
-  padding: 0 14px 14px;
-}
-.search-bar {
-  background: #FFF8F4;
-  border-radius: 22px;
-  padding: 9px 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: #FF9A5C;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
-/* TABS */
-.nav-tabs {
-  display: flex;
-  background: white;
-  border-bottom: 2px solid #FFE8D6;
-  overflow-x: auto;
-}
-.nav-tabs::-webkit-scrollbar { display: none; }
-.tab {
-  flex: 1;
-  min-width: 60px;
-  text-align: center;
-  padding: 8px 4px 6px;
-  font-size: 9px;
-  font-weight: 800;
-  color: #FFAD80;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  border-bottom: 3px solid transparent;
-  transition: all 0.2s;
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
-}
-.tab.active { color: #FF7A2F; border-bottom: 3px solid #FF7A2F; }
-.tab-icon { font-size: 17px; }
-
-/* SCREENS */
-.screen { display: none; }
-.screen.active { display: block; }
-.feed { padding: 12px; display: flex; flex-direction: column; gap: 10px; padding-bottom: 70px; }
-
-/* CARD */
-.card {
-  background: white;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(255,122,47,0.08);
-  border: 1px solid #FFE8D6;
-}
-.card-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 11px 13px;
-}
-.avatar {
-  width: 34px; height: 34px;
-  border-radius: 50%;
-  background: #FFE0CC;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 15px; font-weight: 800; color: #FF7A2F;
-  flex-shrink: 0;
-  border: 2px solid #FFD4B5;
-}
-.card-user { flex: 1; }
-.card-user-name { font-size: 12px; font-weight: 800; color: #2D2D2D; }
-.card-user-sub { font-size: 10px; color: #FFAD80; font-weight: 600; }
-.badge {
-  font-size: 9px; font-weight: 800;
-  padding: 3px 9px; border-radius: 20px;
-  text-transform: uppercase; letter-spacing: 0.4px;
-}
-.badge-found { background: #D1FAE5; color: #065F46; }
-.badge-lost { background: #FEE2E2; color: #991B1B; }
-.badge-adopt { background: #DBEAFE; color: #1E3A8A; }
-.badge-alert { background: #FEF3C7; color: #92400E; }
-.badge-match { background: #FCE7F3; color: #9D174D; }
-
-.card-img {
-  width: 100%; height: 145px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 52px;
-  background: linear-gradient(135deg, #FFE8D6, #FFD4B5);
-}
-.card-body { padding: 10px 13px; }
-.card-title { font-size: 13px; font-weight: 800; color: #2D2D2D; margin-bottom: 3px; }
-.card-desc { font-size: 11px; color: #888; line-height: 1.5; font-weight: 600; }
-.card-location {
-  display: flex; align-items: center; gap: 4px;
-  font-size: 10px; color: #FF7A2F; font-weight: 700; margin-top: 6px;
-}
-.card-actions {
-  display: flex;
-  border-top: 1px solid #FFE8D6;
-  margin-top: 8px;
-}
-.action-btn {
-  flex: 1; padding: 9px 4px;
-  text-align: center; font-size: 11px; font-weight: 700;
-  color: #FFAD80; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 4px;
-  border: none; background: none; font-family: 'Nunito', sans-serif;
-}
-.action-btn.primary { color: #FF7A2F; }
-
-/* SECTION LABEL */
-.section-label {
-  font-size: 11px; font-weight: 800;
-  color: #FFAD80; text-transform: uppercase;
-  letter-spacing: 1px; padding: 10px 14px 5px;
-}
-
-/* MAP */
-.screen-map { padding-bottom: 70px; }
-.filter-row {
-  display: flex; gap: 6px; padding: 10px 12px;
-  overflow-x: auto;
-}
-.filter-row::-webkit-scrollbar { display: none; }
-.chip {
-  background: white;
-  border: 1.5px solid #FFD4B5;
-  border-radius: 20px; padding: 5px 13px;
-  font-size: 10px; font-weight: 800;
-  color: #FFAD80; white-space: nowrap;
-  cursor: pointer; flex-shrink: 0;
-  font-family: 'Nunito', sans-serif;
-}
-.chip.on { background: #FF7A2F; color: white; border-color: #FF7A2F; }
-.big-map {
-  margin: 0 12px; border-radius: 16px;
-  overflow: hidden; height: 200px;
-  border: 1.5px solid #FFD4B5;
-  box-shadow: 0 2px 12px rgba(255,122,47,0.1);
-}
-
-/* LOST & FOUND */
-.lf-list { padding: 0 12px; display: flex; flex-direction: column; gap: 8px; padding-bottom: 70px; }
-.lf-card {
-  background: white; border-radius: 14px;
-  padding: 11px 13px; display: flex;
-  gap: 11px; align-items: center;
-  box-shadow: 0 2px 10px rgba(255,122,47,0.07);
-  border: 1px solid #FFE8D6;
-}
-.lf-pet-img {
-  width: 52px; height: 52px; border-radius: 12px;
-  background: #FFE8D6; display: flex;
-  align-items: center; justify-content: center;
-  font-size: 28px; flex-shrink: 0;
-}
-.lf-info { flex: 1; }
-.lf-name { font-size: 13px; font-weight: 800; color: #2D2D2D; }
-.lf-detail { font-size: 10px; color: #FFAD80; margin-top: 2px; font-weight: 600; }
-.lf-status { font-size: 10px; font-weight: 800; margin-top: 4px; }
-.status-lost { color: #DC2626; }
-.status-found { color: #16A34A; }
-
-/* PETMATCH */
-.match-list { padding: 0 12px; display: flex; flex-direction: column; gap: 10px; padding-bottom: 70px; }
-.match-card {
-  background: white; border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(255,90,138,0.1);
-  border: 1px solid #FCE7F3;
-}
-.match-header { padding: 11px 13px; display: flex; align-items: center; gap: 10px; }
-.match-img {
-  width: 54px; height: 54px; border-radius: 12px;
-  background: linear-gradient(135deg, #FCE7F3, #FBCFE8);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 28px; flex-shrink: 0;
-  border: 2px solid #FBCFE8;
-}
-.match-info { flex: 1; }
-.match-name { font-size: 13px; font-weight: 800; color: #2D2D2D; }
-.match-breed { font-size: 10px; color: #F472B6; font-weight: 700; }
-.match-detail { font-size: 10px; color: #FFAD80; margin-top: 2px; font-weight: 600; }
-.match-btn {
-  background: linear-gradient(135deg, #F472B6, #EC4899);
-  color: white; border: none; border-radius: 20px;
-  padding: 7px 14px; font-size: 11px; font-weight: 800;
-  cursor: pointer; font-family: 'Nunito', sans-serif;
-  box-shadow: 0 2px 8px rgba(236,72,153,0.3);
-}
-.match-tags { padding: 0 13px 11px; display: flex; gap: 6px; flex-wrap: wrap; }
-.match-tag {
-  background: #FDF2F8; border: 1px solid #FBCFE8;
-  border-radius: 20px; padding: 3px 10px;
-  font-size: 9px; font-weight: 800; color: #BE185D;
-}
-
-/* ONGs */
-.ong-list { padding: 0 12px; display: flex; flex-direction: column; gap: 8px; padding-bottom: 70px; }
-.ong-card {
-  background: white; border-radius: 14px; padding: 13px;
-  box-shadow: 0 2px 10px rgba(255,122,47,0.07);
-  border: 1px solid #FFE8D6;
-}
-.ong-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-.ong-avatar {
-  width: 42px; height: 42px; border-radius: 12px;
-  background: #FFE8D6; display: flex;
-  align-items: center; justify-content: center; font-size: 20px;
-}
-.ong-name { font-size: 13px; font-weight: 800; color: #2D2D2D; }
-.ong-city { font-size: 10px; color: #FFAD80; font-weight: 600; }
-.ong-stats { display: flex; gap: 14px; }
-.ong-stat { font-size: 10px; color: #FFAD80; font-weight: 600; }
-.ong-stat strong { color: #2D2D2D; font-size: 14px; display: block; font-weight: 800; }
-.ong-btn {
-  background: #FF7A2F; color: white; border: none;
-  border-radius: 20px; padding: 6px 14px;
-  font-size: 11px; font-weight: 800; cursor: pointer;
-  margin-left: auto; font-family: 'Nunito', sans-serif;
-  box-shadow: 0 2px 8px rgba(255,122,47,0.3);
-}
-.ong-btn.following {
-  background: white; color: #FF7A2F;
-  border: 1.5px solid #FF7A2F; box-shadow: none;
-}
-
-/* BOTTOM NAV */
-.bottom-nav {
-  display: flex;
-  border-top: 2px solid #FFE8D6;
-  background: white;
-  padding: 6px 0 10px;
-  position: sticky;
-  bottom: 0;
-}
-.bnav-item {
-  flex: 1; display: flex; flex-direction: column;
-  align-items: center; gap: 2px;
-  font-size: 9px; font-weight: 800;
-  color: #FFAD80; cursor: pointer;
-  padding: 4px 0; letter-spacing: 0.3px;
-  text-transform: uppercase;
-}
-.bnav-item.active { color: #FF7A2F; }
-.bnav-icon { font-size: 19px; }
-.bnav-center {
-  width: 46px; height: 46px;
-  background: #FF7A2F; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 22px; margin-top: -16px;
-  box-shadow: 0 4px 14px rgba(255,122,47,0.4);
-  border: 3px solid white;
-}
-
-/* STORY ROW */
-.story-row {
-  display: flex; gap: 10px; padding: 10px 12px 4px;
-  overflow-x: auto;
-}
-.story-row::-webkit-scrollbar { display: none; }
-.story {
-  display: flex; flex-direction: column;
-  align-items: center; gap: 4px; flex-shrink: 0;
-}
-.story-ring {
-  width: 52px; height: 52px; border-radius: 50%;
-  border: 2.5px solid #FF7A2F; padding: 2px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 26px; background: #FFE8D6;
-}
-.story-ring.match-ring { border-color: #EC4899; background: #FDF2F8; }
-.story-name { font-size: 9px; font-weight: 700; color: #888; text-align: center; max-width: 52px; }
-
-/* FAB */
-.fab-wrap { position: relative; }
-
-/* ALERT BANNER */
-.alert-banner {
-  background: linear-gradient(135deg, #FF7A2F, #FF5A1F);
-  margin: 10px 12px 0;
-  border-radius: 14px;
-  padding: 10px 13px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0 3px 12px rgba(255,122,47,0.25);
-}
-.alert-icon { font-size: 22px; }
-.alert-text { flex: 1; }
-.alert-title { font-size: 12px; font-weight: 800; color: white; }
-.alert-sub { font-size: 10px; color: #FFE0CC; font-weight: 600; margin-top: 1px; }
-.alert-action { font-size: 10px; font-weight: 800; color: white; background: rgba(255,255,255,0.25); padding: 4px 10px; border-radius: 10px; }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-
 <h1>✦ RadarPet — Protótipo Interativo ✦</h1>
 
 <div class="phone">
@@ -452,74 +92,7 @@ h1 {
       <div class="alert-action">Ver</div>
     </div>
 
-    <div class="feed">
-      <!-- Card 1 -->
-      <div class="card">
-        <div class="card-header">
-          <div class="avatar">M</div>
-          <div class="card-user">
-            <div class="card-user-name">Marina S.</div>
-            <div class="card-user-sub">há 12 min • Blumenau, SC</div>
-          </div>
-          <span class="badge badge-found">Encontrado</span>
-        </div>
-        <div class="card-img">🐕</div>
-        <div class="card-body">
-          <div class="card-title">Cãozinho encontrado na Rua XV</div>
-          <div class="card-desc">Macho, porte médio, cor caramelo. Parece bem de saúde. Alguém reconhece?</div>
-          <div class="card-location">📍 Próximo a você (380m)</div>
-        </div>
-        <div class="card-actions">
-          <button class="action-btn">🐾 34</button>
-          <button class="action-btn">💬 Comentar</button>
-          <button class="action-btn primary">📤 Compartilhar</button>
-        </div>
-      </div>
-
-      <!-- Card 2 -->
-      <div class="card">
-        <div class="card-header">
-          <div class="avatar" style="background:#DBEAFE;color:#1E3A8A;font-size:12px;">ONG</div>
-          <div class="card-user">
-            <div class="card-user-name">Patinhas Felizes</div>
-            <div class="card-user-sub">há 1h • Indaial, SC</div>
-          </div>
-          <span class="badge badge-adopt">Adoção</span>
-        </div>
-        <div class="card-img" style="background: linear-gradient(135deg, #D1FAE5, #6EE7B7);">🐱</div>
-        <div class="card-body">
-          <div class="card-title">Luna busca um lar 💙</div>
-          <div class="card-desc">Gatinha de 3 meses, vacinada, castrada e super carinhosa.</div>
-        </div>
-        <div class="card-actions">
-          <button class="action-btn">🐾 87</button>
-          <button class="action-btn primary">🏠 Quero adotar</button>
-        </div>
-      </div>
-
-      <!-- Card 3 — rato branco! -->
-      <div class="card">
-        <div class="card-header">
-          <div class="avatar" style="background:#F3E8FF;color:#7E22CE;">A</div>
-          <div class="card-user">
-            <div class="card-user-name">Ana Paula</div>
-            <div class="card-user-sub">há 2h • Gaspar, SC</div>
-          </div>
-          <span class="badge" style="background:#F3E8FF;color:#7E22CE;">Dia a dia</span>
-        </div>
-        <div class="card-img" style="background: linear-gradient(135deg, #EDE9FE, #DDD6FE);">🐭</div>
-        <div class="card-body">
-          <div class="card-title">Hoje o Nevinho completou 1 ano! 🎉</div>
-          <div class="card-desc">Meu ratinho branco favorito merece todo o amor do mundo. Feliz aniversário, filho! 🤍</div>
-        </div>
-        <div class="card-actions">
-          <button class="action-btn">🐾 112</button>
-          <button class="action-btn">💬 23</button>
-          <button class="action-btn primary">📤 Compartilhar</button>
-        </div>
-      </div>
-
-    </div>
+    <div class="feed" id="feed-list"></div>
   </div>
 
   <!-- ===== MAPA ===== -->
@@ -599,42 +172,9 @@ h1 {
       </div>
     </div>
     <div class="section-label">Casos em aberto</div>
-    <div class="lf-list">
-      <div class="lf-card">
-        <div class="lf-pet-img">🐕</div>
-        <div class="lf-info">
-          <div class="lf-name">Rex — Golden Retriever</div>
-          <div class="lf-detail">Sumiu em 24/04 • Bairro da Velha, Blumenau</div>
-          <div class="lf-status status-lost">● Desaparecido há 3 dias</div>
-        </div>
-      </div>
-      <div class="lf-card">
-        <div class="lf-pet-img">🐱</div>
-        <div class="lf-info">
-          <div class="lf-name">Mimi — Siamês</div>
-          <div class="lf-detail">Sumiu em 20/04 • Garcia, Blumenau</div>
-          <div class="lf-status status-lost">● Desaparecida há 7 dias</div>
-        </div>
-      </div>
-      <div class="lf-card">
-        <div class="lf-pet-img">🐭</div>
-        <div class="lf-info">
-          <div class="lf-name">Nevinho — Rato Branco</div>
-          <div class="lf-detail">Sumiu em 27/04 • Itoupava, Blumenau</div>
-          <div class="lf-status status-lost">● Desaparecido há 1 dia</div>
-        </div>
-      </div>
-      <div class="lf-card" style="opacity:0.65;">
-        <div class="lf-pet-img" style="background:#D1FAE5;">🐶</div>
-        <div class="lf-info">
-          <div class="lf-name">Pipoca — SRD</div>
-          <div class="lf-detail">Sumiu em 10/04 • Velha Grande</div>
-          <div class="lf-status status-found">✅ Reencontrada!</div>
-        </div>
-      </div>
-    </div>
+    <div class="lf-list" id="lost-found-list"></div>
     <div style="padding: 4px 12px 70px; text-align: center;">
-      <button style="background:#FF7A2F;color:white;border:none;border-radius:22px;padding:12px 28px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 14px rgba(255,122,47,0.3);">+ Reportar pet perdido</button>
+      <button class="report-btn" type="button" onclick="openReportModal()">+ Reportar pet perdido</button>
     </div>
   </div>
 
@@ -654,131 +194,20 @@ h1 {
       <div class="chip">SRD</div>
     </div>
     <div class="section-label">Pets disponíveis perto de você</div>
-    <div class="match-list">
-      <div class="match-card">
-        <div class="match-header">
-          <div class="match-img">🐕</div>
-          <div class="match-info">
-            <div class="match-name">Thor</div>
-            <div class="match-breed">Golden Retriever • Macho</div>
-            <div class="match-detail">2 anos • 3,2km de você • Blumenau</div>
-          </div>
-          <button class="match-btn">💕 Match</button>
-        </div>
-        <div class="match-tags">
-          <span class="match-tag">✅ Vacinado</span>
-          <span class="match-tag">📋 Pedigree</span>
-          <span class="match-tag">🏥 Check-up ok</span>
-        </div>
-      </div>
-
-      <div class="match-card">
-        <div class="match-header">
-          <div class="match-img">🐩</div>
-          <div class="match-info">
-            <div class="match-name">Bella</div>
-            <div class="match-breed">Poodle Toy • Fêmea</div>
-            <div class="match-detail">3 anos • 5,1km • Indaial</div>
-          </div>
-          <button class="match-btn">💕 Match</button>
-        </div>
-        <div class="match-tags">
-          <span class="match-tag">✅ Vacinada</span>
-          <span class="match-tag">🏥 Check-up ok</span>
-          <span class="match-tag">🌟 Premiada</span>
-        </div>
-      </div>
-
-      <div class="match-card">
-        <div class="match-header">
-          <div class="match-img">🐈</div>
-          <div class="match-info">
-            <div class="match-name">Simba</div>
-            <div class="match-breed">Persa • Macho</div>
-            <div class="match-detail">4 anos • 7km • Gaspar</div>
-          </div>
-          <button class="match-btn">💕 Match</button>
-        </div>
-        <div class="match-tags">
-          <span class="match-tag">✅ Vacinado</span>
-          <span class="match-tag">📋 Pedigree</span>
-        </div>
-      </div>
-    </div>
+    <div class="match-list" id="match-list"></div>
   </div>
 
   <!-- ===== ONGs ===== -->
   <div class="screen" id="screen-ongs">
     <div class="section-label">ONGs parceiras</div>
-    <div class="ong-list">
-      <div class="ong-card">
-        <div class="ong-header">
-          <div class="ong-avatar">🏠</div>
-          <div>
-            <div class="ong-name">Patinhas Felizes</div>
-            <div class="ong-city">Indaial, SC</div>
-          </div>
-          <button class="ong-btn following">Seguindo</button>
-        </div>
-        <div class="ong-stats">
-          <div class="ong-stat"><strong>142</strong>adotados</div>
-          <div class="ong-stat"><strong>38</strong>em adoção</div>
-          <div class="ong-stat"><strong>4.9 ★</strong>avaliação</div>
-        </div>
-      </div>
-      <div class="ong-card">
-        <div class="ong-header">
-          <div class="ong-avatar" style="background:#FCE7F3;">🐾</div>
-          <div>
-            <div class="ong-name">Amigos de Pata</div>
-            <div class="ong-city">Blumenau, SC</div>
-          </div>
-          <button class="ong-btn">Seguir</button>
-        </div>
-        <div class="ong-stats">
-          <div class="ong-stat"><strong>89</strong>adotados</div>
-          <div class="ong-stat"><strong>21</strong>em adoção</div>
-          <div class="ong-stat"><strong>4.7 ★</strong>avaliação</div>
-        </div>
-      </div>
-      <div class="ong-card">
-        <div class="ong-header">
-          <div class="ong-avatar" style="background:#DCFCE7;">🏥</div>
-          <div>
-            <div class="ong-name">Vet Solidário</div>
-            <div class="ong-city">Blumenau, SC</div>
-          </div>
-          <button class="ong-btn">Seguir</button>
-        </div>
-        <div class="ong-stats">
-          <div class="ong-stat"><strong>Clínica</strong>parceira</div>
-          <div class="ong-stat"><strong>-50%</strong>resgatados</div>
-          <div class="ong-stat"><strong>5.0 ★</strong>avaliação</div>
-        </div>
-      </div>
-      <div class="ong-card">
-        <div class="ong-header">
-          <div class="ong-avatar" style="background:#FEF9C3;">🛒</div>
-          <div>
-            <div class="ong-name">PetShop Amigo</div>
-            <div class="ong-city">Blumenau, SC</div>
-          </div>
-          <button class="ong-btn">Seguir</button>
-        </div>
-        <div class="ong-stats">
-          <div class="ong-stat"><strong>Parceiro</strong>comercial</div>
-          <div class="ong-stat"><strong>10%</strong>desconto</div>
-          <div class="ong-stat"><strong>4.8 ★</strong>avaliação</div>
-        </div>
-      </div>
-    </div>
+    <div class="ong-list" id="ong-list"></div>
   </div>
 
   <!-- BOTTOM NAV -->
   <div class="bottom-nav">
     <div class="bnav-item active" id="bnav-feed" onclick="showScreen('feed')"><span class="bnav-icon">🏠</span>Início</div>
     <div class="bnav-item" id="bnav-mapa" onclick="showScreen('mapa')"><span class="bnav-icon">🗺️</span>Mapa</div>
-    <div class="bnav-item fab-wrap" onclick="showScreen('feed')">
+    <div class="bnav-item fab-wrap" onclick="openReportModal()">
       <div class="bnav-center">📷</div>
     </div>
     <div class="bnav-item" id="bnav-match" onclick="showScreen('match')"><span class="bnav-icon">💕</span>Match</div>
@@ -786,21 +215,50 @@ h1 {
   </div>
 </div>
 
-<script>
-function showScreen(name) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.bnav-item').forEach(b => b.classList.remove('active'));
-
-  document.getElementById('screen-' + name).classList.add('active');
-
-  const tabMap = { feed: 0, mapa: 1, achados: 2, match: 3, ongs: 4 };
-  const tabs = document.querySelectorAll('.tab');
-  if (tabMap[name] !== undefined) tabs[tabMap[name]].classList.add('active');
-
-  const bnav = document.getElementById('bnav-' + name);
-  if (bnav) bnav.classList.add('active');
-}
-</script>
+<div class="modal-backdrop" id="report-modal" aria-hidden="true">
+  <form class="report-modal" id="report-form">
+    <div class="modal-head">
+      <div>
+        <strong>Reportar pet</strong>
+        <span>Crie um alerta local no app</span>
+      </div>
+      <button type="button" class="modal-close" onclick="closeReportModal()" aria-label="Fechar">x</button>
+    </div>
+    <label>
+      Nome ou identificação
+      <input name="name" type="text" placeholder="Ex: Cão caramelo" required>
+    </label>
+    <label>
+      Tipo
+      <select name="type">
+        <option value="lost">Perdido</option>
+        <option value="found">Encontrado</option>
+        <option value="adopt">Adoção</option>
+        <option value="alert">Alerta</option>
+      </select>
+    </label>
+    <label>
+      Animal
+      <select name="emoji">
+        <option value="🐕">Cachorro</option>
+        <option value="🐱">Gato</option>
+        <option value="🐭">Rato</option>
+        <option value="🐰">Coelho</option>
+        <option value="🦜">Ave</option>
+      </select>
+    </label>
+    <label>
+      Localização
+      <input name="location" type="text" placeholder="Bairro, cidade" required>
+    </label>
+    <label>
+      Descrição
+      <textarea name="description" placeholder="Conte o que aconteceu" required></textarea>
+    </label>
+    <button class="modal-submit" type="submit">Salvar alerta</button>
+  </form>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script src="app.js"></script>
 </body>
 </html>

@@ -1,0 +1,30 @@
+[
+  {
+    "id": "patinhas",
+    "icon": "🐾",
+    "name": "Patinhas Felizes",
+    "meta": "12 pets para adoção",
+    "cta": "Ver pets"
+  },
+  {
+    "id": "amigos",
+    "icon": "🏠",
+    "name": "Amigos de Pata",
+    "meta": "Precisa de ração",
+    "cta": "Ajudar"
+  },
+  {
+    "id": "vet",
+    "icon": "🩺",
+    "name": "Vet Solidário",
+    "meta": "Mutirão sábado",
+    "cta": "Agendar"
+  },
+  {
+    "id": "shop",
+    "icon": "🛒",
+    "name": "PetShop Amigo",
+    "meta": "20% para adotantes",
+    "cta": "Cupom"
+  }
+]

@@ -1,0 +1,35 @@
+[
+  {
+    "id": "thor",
+    "emoji": "🐕",
+    "name": "Thor",
+    "age": "2 anos",
+    "traits": [
+      "Brincalhão",
+      "Crianças",
+      "Casa"
+    ]
+  },
+  {
+    "id": "bella",
+    "emoji": "🐱",
+    "name": "Bella",
+    "age": "1 ano",
+    "traits": [
+      "Calma",
+      "Apartamento",
+      "Castrada"
+    ]
+  },
+  {
+    "id": "simba",
+    "emoji": "🐰",
+    "name": "Simba",
+    "age": "6 meses",
+    "traits": [
+      "Dócil",
+      "Silencioso",
+      "Família"
+    ]
+  }
+]

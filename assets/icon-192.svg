@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="116" fill="#FF7A2F"/>
+  <circle cx="256" cy="236" r="126" fill="#FFF0E0"/>
+  <path d="M188 222c0-46 31-78 68-78s68 32 68 78c0 58-68 128-68 128s-68-70-68-128Z" fill="#2D2D2D"/>
+  <circle cx="256" cy="222" r="31" fill="#FFAD80"/>
+  <text x="256" y="426" text-anchor="middle" font-family="Arial, sans-serif" font-size="82" font-weight="900" fill="#FFF8F4">RP</text>
+</svg>
