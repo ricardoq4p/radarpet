@@ -9,6 +9,18 @@ Configurar no Netlify:
 - `MONGODB_URI`
 - `MONGODB_DB`
 
+## Deploy automático no Netlify
+
+O projeto está configurado para deploy automático por Git no branch `main`.
+
+No painel do Netlify, confirme apenas estes pontos:
+
+1. O site está conectado ao repositório `ricardoq4p/radarpet`.
+2. O branch de produção está definido como `main`.
+3. As variáveis `MONGODB_URI` e `MONGODB_DB` estão salvas em `Site configuration > Environment variables`.
+
+Com isso, cada novo `git push` no `main` dispara um novo deploy automaticamente.
+
 ## Como rodar localmente
 
 1. Instale as dependências:

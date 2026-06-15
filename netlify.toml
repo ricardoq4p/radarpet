@@ -1,5 +1,13 @@
 [build]
+  publish = "."
   functions = "netlify/functions"
 
+[build.environment]
+  NODE_VERSION = "20"
+
 [functions]
+  external_node_modules = ["mongodb"]
   node_bundler = "esbuild"
+
+[dev]
+  publish = "."
