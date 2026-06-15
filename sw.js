@@ -1,4 +1,4 @@
-const CACHE_NAME = "radarpet-app-v7";
+const CACHE_NAME = "radarpet-app-v8";
 const APP_SHELL = [
   "./",
   "index.html",
@@ -30,9 +30,16 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   const request = event.request;
+  const requestUrl = new URL(request.url);
+  const isApiRequest = requestUrl.pathname.startsWith("/.netlify/functions/");
   const isPageRequest =
     request.mode === "navigate" ||
     request.headers.get("accept")?.includes("text/html");
+
+  if (isApiRequest) {
+    event.respondWith(fetch(request));
+    return;
+  }
 
   if (isPageRequest) {
     event.respondWith(

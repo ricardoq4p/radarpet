@@ -5,6 +5,7 @@ const FOLLOWS_KEY = "radarpet_follows";
 // Netlify Functions escondem a conexão com o Atlas do lado do servidor.
 const PETS_API_LIST_URL = "/.netlify/functions/list-pets";
 const PETS_API_CREATE_URL = "/.netlify/functions/create-pet";
+const PETS_API_CONTACT_URL = "/.netlify/functions/get-pet-contact";
 const PETS_REFRESH_INTERVAL_MS = 15000;
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/daw3up5vu/image/upload";
 const CLOUDINARY_PRESET = "radarpet";
@@ -92,12 +93,14 @@ function normalizePet(record) {
   return {
     id: String(record.id || record._id || `pet-${Date.now()}`),
     nome: String(record.nome || "").trim(),
+    nomeTutor: String(record.nomeTutor || "").trim(),
     especie: String(record.especie || "").trim(),
     raca: String(record.raca || "").trim(),
     sexo: String(record.sexo || "").trim(),
     cor: String(record.cor || "").trim(),
     cidade: String(record.cidade || "").trim(),
     telefone: String(record.telefone || "").trim(),
+    telefoneMascara: String(record.telefoneMascara || "").trim(),
     status: String(record.status || "").trim(),
     fotoUrl: String(record.fotoUrl || "").trim(),
   };
@@ -142,6 +145,67 @@ async function createPetInApi(pet) {
   return normalizePet(data.pet);
 }
 
+async function fetchPetContact(petId) {
+  const response = await fetch(PETS_API_CONTACT_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({ id: petId }),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || !data.telefone) {
+    throw new Error(data.error || "Nao foi possivel carregar o contato.");
+  }
+
+  return String(data.telefone).trim();
+}
+
+function maskPhone(phone) {
+  const digits = String(phone || "").replace(/\D/g, "");
+  if (digits.length < 4) {
+    return "Contato protegido";
+  }
+
+  const visiblePrefix = digits.slice(0, Math.min(2, digits.length));
+  const visibleSuffix = digits.slice(-2);
+  const hiddenSize = Math.max(digits.length - (visiblePrefix.length + visibleSuffix.length), 2);
+  return `${visiblePrefix}${"*".repeat(hiddenSize)}${visibleSuffix}`;
+}
+
+function getDisplayPhone(pet) {
+  if (pet.telefoneMascara) {
+    return pet.telefoneMascara;
+  }
+
+  if (pet.telefone) {
+    return maskPhone(pet.telefone);
+  }
+
+  return "Contato protegido";
+}
+
+function formatPhoneForWhatsApp(phone) {
+  const digits = String(phone || "").replace(/\D/g, "");
+  if (!digits) {
+    return "";
+  }
+
+  if (digits.length === 10 || digits.length === 11) {
+    return `55${digits}`;
+  }
+
+  return digits;
+}
+
+function buildWhatsAppUrl(phone, petName) {
+  const formattedPhone = formatPhoneForWhatsApp(phone);
+  const message = encodeURIComponent(`Olá! Vi o cadastro do pet ${petName} no RadarPet.`);
+  return `https://wa.me/${formattedPhone}?text=${message}`;
+}
+
 function getPetsSignature(pets) {
   return JSON.stringify(
     pets.map((pet) => [
@@ -152,7 +216,7 @@ function getPetsSignature(pets) {
       pet.sexo,
       pet.cor,
       pet.cidade,
-      pet.telefone,
+      pet.telefoneMascara || pet.telefone,
       pet.status,
       pet.fotoUrl,
     ])
@@ -278,13 +342,14 @@ function getEmptyState(message) {
 
 function buildPetCard(pet) {
   const badgeClass = badgeClassFromStatus(pet.status);
+  const tutorLabel = pet.nomeTutor ? `Tutor: ${pet.nomeTutor}` : "Tutor não informado";
   return `
     <article class="card" data-pet-id="${escapeHtml(pet.id)}">
       <div class="card-header">
         <div class="avatar">${escapeHtml(emojiFromSpecies(pet.especie))}</div>
         <div class="card-user">
           <div class="card-user-name">${escapeHtml(pet.nome)}</div>
-          <div class="card-user-sub">${escapeHtml(pet.cidade)} • ${escapeHtml(pet.telefone)}</div>
+          <div class="card-user-sub">${escapeHtml(pet.cidade)} • ${escapeHtml(getDisplayPhone(pet))}</div>
         </div>
         <span class="badge ${badgeClass}">${escapeHtml(pet.status)}</span>
       </div>
@@ -294,6 +359,7 @@ function buildPetCard(pet) {
       <div class="card-body">
         <div class="card-title">${escapeHtml(pet.nome)}</div>
         <div class="card-desc">${escapeHtml(pet.especie)} • ${escapeHtml(pet.raca)} • ${escapeHtml(pet.sexo)}</div>
+        <div class="card-desc">${escapeHtml(tutorLabel)}</div>
         <div class="card-meta-grid">
           <span class="card-meta-pill">${escapeHtml(pet.cor)}</span>
           <span class="card-meta-pill">${escapeHtml(pet.cidade)}</span>
@@ -301,7 +367,7 @@ function buildPetCard(pet) {
         <div class="card-location">📍 ${escapeHtml(pet.cidade)}</div>
       </div>
       <div class="card-actions card-actions-stack">
-        <button class="action-btn primary full-width" type="button" data-action="contact" data-pet-id="${escapeHtml(pet.id)}">📞 ${escapeHtml(pet.telefone)}</button>
+        <button class="action-btn primary full-width" type="button" data-action="contact" data-pet-id="${escapeHtml(pet.id)}">Entrar em contato</button>
       </div>
     </article>
   `;
@@ -312,7 +378,7 @@ function renderFeed() {
   if (!target) return;
 
   const pets = state.pets.filter((pet) =>
-    matchesQuery(pet.nome, pet.especie, pet.raca, pet.sexo, pet.cor, pet.cidade, pet.status)
+    matchesQuery(pet.nome, pet.nomeTutor, pet.especie, pet.raca, pet.sexo, pet.cor, pet.cidade, pet.status)
   );
 
   target.innerHTML = pets.length
@@ -327,7 +393,7 @@ function renderLostFound() {
   const pets = state.pets.filter((pet) => {
     const statusSlug = slugFromStatus(pet.status);
     return (state.lostFilter === "all" || state.lostFilter === statusSlug) &&
-      matchesQuery(pet.nome, pet.especie, pet.raca, pet.cidade, pet.status);
+      matchesQuery(pet.nome, pet.nomeTutor, pet.especie, pet.raca, pet.cidade, pet.status);
   });
 
   target.innerHTML = pets.length
@@ -339,6 +405,7 @@ function renderLostFound() {
           <div class="lf-info">
             <div class="lf-name">${escapeHtml(pet.nome)}</div>
             <div class="lf-detail">${escapeHtml(pet.especie)} • ${escapeHtml(pet.raca)} • ${escapeHtml(pet.cidade)}</div>
+            <div class="lf-detail">Tutor: ${escapeHtml(pet.nomeTutor || "Não informado")}</div>
             <div class="lf-detail">${escapeHtml(pet.sexo)} • ${escapeHtml(pet.cor)}</div>
             <div class="lf-status ${escapeHtml(pet.status === "Perdido" ? "status-lost" : pet.status === "Encontrado" ? "status-found" : "status-available")}">● ${escapeHtml(pet.status)}</div>
           </div>
@@ -354,7 +421,7 @@ function renderMapNearby() {
   const pets = state.pets.filter((pet) => {
     const statusSlug = slugFromStatus(pet.status);
     return (state.mapFilter === "all" || state.mapFilter === statusSlug) &&
-      matchesQuery(pet.nome, pet.especie, pet.raca, pet.cidade, pet.status);
+      matchesQuery(pet.nome, pet.nomeTutor, pet.especie, pet.raca, pet.cidade, pet.status);
   });
 
   target.innerHTML = pets.length
@@ -366,6 +433,7 @@ function renderMapNearby() {
           <div class="lf-info">
             <div class="lf-name">${escapeHtml(pet.nome)}</div>
             <div class="lf-detail">${escapeHtml(pet.cidade)} • ${escapeHtml(pet.status)}</div>
+            <div class="lf-detail">Tutor: ${escapeHtml(pet.nomeTutor || "Não informado")}</div>
             <div class="lf-detail">${escapeHtml(pet.especie)} • ${escapeHtml(pet.raca)} • ${escapeHtml(pet.cor)}</div>
           </div>
           <span class="badge ${escapeHtml(badgeClassFromStatus(pet.status))}">${escapeHtml(pet.status)}</span>
@@ -483,6 +551,7 @@ function buildPetPayload(formData) {
   return {
     id: `pet-${Date.now()}`,
     nome: String(formData.get("name") || "").trim(),
+    nomeTutor: String(formData.get("ownerName") || "").trim(),
     especie: String(formData.get("species") || "").trim(),
     raca: String(formData.get("breed") || "").trim(),
     sexo: String(formData.get("sex") || "").trim(),
@@ -490,6 +559,7 @@ function buildPetPayload(formData) {
     cidade: String(formData.get("city") || "").trim(),
     telefone: String(formData.get("phone") || "").trim(),
     status: String(formData.get("status") || "").trim(),
+    website: String(formData.get("website") || "").trim(),
     fotoUrl: state.upload.photoUrl || "",
   };
 }
@@ -497,6 +567,7 @@ function buildPetPayload(formData) {
 function isPetValid(pet) {
   return Boolean(
     pet.nome &&
+    pet.nomeTutor &&
     pet.especie &&
     pet.raca &&
     pet.sexo &&
@@ -674,7 +745,7 @@ function setupInteractions() {
         openInfoModal(
           pet.nome,
           `${pet.status} • ${pet.cidade}`,
-          `${pet.especie} • ${pet.raca} • ${pet.sexo} • ${pet.cor}. Contato: ${pet.telefone}.`
+          `${pet.especie} • ${pet.raca} • ${pet.sexo} • ${pet.cor}. Tutor: ${pet.nomeTutor || "Não informado"}. Use o botao Entrar em contato para abrir o WhatsApp.`
         );
       }
       return;
@@ -683,10 +754,19 @@ function setupInteractions() {
     if (action === "contact") {
       const pet = findPet(target.dataset.petId);
       if (!pet) return;
-      if (navigator.clipboard) {
-        await navigator.clipboard.writeText(pet.telefone).catch(() => {});
+      try {
+        const phone = pet.telefone || await fetchPetContact(pet.id);
+        pet.telefone = phone;
+        const whatsappPhone = formatPhoneForWhatsApp(phone);
+        if (!whatsappPhone) {
+          throw new Error("Telefone invalido para WhatsApp.");
+        }
+        window.open(buildWhatsAppUrl(whatsappPhone, pet.nome), "_blank", "noopener,noreferrer");
+        showToast("Abrindo conversa no WhatsApp.");
+      } catch (error) {
+        console.error(error);
+        showToast("Nao foi possivel abrir o WhatsApp agora.");
       }
-      showToast(`Telefone copiado: ${pet.telefone}`);
       return;
     }
 
@@ -761,3 +841,6 @@ document.addEventListener("DOMContentLoaded", boot);
 window.showScreen = showScreen;
 window.openReportModal = openReportModal;
 window.closeReportModal = closeReportModal;
+
+
+

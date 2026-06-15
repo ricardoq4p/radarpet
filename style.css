@@ -706,6 +706,16 @@ body {
   text-decoration: underline;
 }
 
+.honeypot-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .modal-submit {
   background: #FF7A2F;
   color: white;

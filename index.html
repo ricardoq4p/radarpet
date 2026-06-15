@@ -168,6 +168,11 @@
     </label>
 
     <label>
+      Nome do Tutor
+      <input name="ownerName" type="text" placeholder="Ex: Maria Silva" required>
+    </label>
+
+    <label>
       Espécie
       <select name="species" required>
         <option value="">Selecione</option>
@@ -214,7 +219,7 @@
 
     <label>
       Telefone para contato
-      <input name="phone" type="tel" placeholder="(47) 99999-9999" required>
+      <input name="phone" type="tel" placeholder="(47) 99999-9999" inputmode="tel" maxlength="20" required>
     </label>
 
     <label>
@@ -232,6 +237,11 @@
     <label class="consent-row">
       <input id="legal-consent" name="legalConsent" type="checkbox" required>
       <span>Li e concordo com os <a href="termos.html" target="_blank" rel="noopener noreferrer">Termos de Uso</a> e <a href="privacidade.html" target="_blank" rel="noopener noreferrer">Política de Privacidade</a>.</span>
+    </label>
+
+    <label class="honeypot-field" aria-hidden="true" tabindex="-1">
+      Nao preencha este campo
+      <input name="website" type="text" autocomplete="off" tabindex="-1">
     </label>
 
     <button class="modal-submit" id="report-submit-button" type="submit">Salvar pet</button>
@@ -261,3 +271,4 @@
 <script src="app.js?v=6"></script>
 </body>
 </html>
+

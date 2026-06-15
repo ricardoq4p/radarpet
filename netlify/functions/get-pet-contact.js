@@ -1,9 +1,8 @@
 "use strict";
 
 const { getDb } = require("./shared/mongodb");
-const { normalizePetPayload, toPublicPet, validatePet } = require("./shared/pet-utils");
 const {
-  CREATE_LIMIT,
+  CONTACT_LIMIT,
   buildHeaders,
   enforceRateLimit,
   getClientIp,
@@ -24,7 +23,7 @@ exports.handler = async function handler(event) {
 
   try {
     const ip = getClientIp(event.headers || {});
-    if (!enforceRateLimit(ip, "create-pet", CREATE_LIMIT)) {
+    if (!enforceRateLimit(ip, "get-pet-contact", CONTACT_LIMIT)) {
       return {
         statusCode: 429,
         headers: buildHeaders(),
@@ -35,42 +34,49 @@ exports.handler = async function handler(event) {
     }
 
     const payload = JSON.parse(event.body || "{}");
-    const pet = normalizePetPayload(payload);
-    const validationError = validatePet(pet);
+    const petId = String(payload.id || "").trim();
 
-    if (validationError) {
+    if (!petId) {
       return {
         statusCode: 400,
         headers: buildHeaders(),
         body: JSON.stringify({
-          error: validationError,
+          error: "Pet invalido.",
         }),
       };
     }
 
     const db = await getDb();
-    const documentToInsert = {
-      ...pet,
-      createdAt: new Date().toISOString(),
-    };
+    const pet = await db.collection(COLLECTION_NAME).findOne(
+      { id: petId },
+      { projection: { _id: 0, telefone: 1 } }
+    );
 
-    await db.collection(COLLECTION_NAME).insertOne(documentToInsert);
+    if (!pet?.telefone) {
+      return {
+        statusCode: 404,
+        headers: buildHeaders(),
+        body: JSON.stringify({
+          error: "Contato nao encontrado.",
+        }),
+      };
+    }
 
     return {
-      statusCode: 201,
+      statusCode: 200,
       headers: buildHeaders(),
       body: JSON.stringify({
-        pet: toPublicPet(documentToInsert),
+        telefone: String(pet.telefone),
       }),
     };
   } catch (error) {
-    console.error("Erro ao cadastrar pet:", error);
+    console.error("Erro ao carregar contato:", error);
 
     return {
       statusCode: 500,
       headers: buildHeaders(),
       body: JSON.stringify({
-        error: "Nao foi possivel salvar o cadastro no momento.",
+        error: "Nao foi possivel carregar o contato no momento.",
       }),
     };
   }
