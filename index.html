@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RadarPet | Ajuda animal perto de você</title>
+  <meta
+    name="description"
+    content="RadarPet conecta pessoas, voluntários e protetores para registrar animais em risco, organizar resgates e encontrar matches responsáveis."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="Navegação principal">
+      <a class="brand" href="#inicio" aria-label="RadarPet">
+        <span class="brand-mark">RP</span>
+        <span>RadarPet</span>
+      </a>
+      <div class="nav-links">
+        <a href="#radar">Radar</a>
+        <a href="#casos">Casos</a>
+        <a href="#pedigree">Pedigree</a>
+        <a href="#registrar">Registrar</a>
+      </div>
+      <a class="nav-action" href="#registrar">Enviar alerta</a>
+    </nav>
+
+    <section id="inicio" class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">Rede colaborativa de proteção animal</span>
+        <h1>RadarPet</h1>
+        <p>
+          Registre animais em situação de risco, encontre ajuda por região e conecte
+          protetores, voluntários e tutores responsáveis em poucos minutos.
+        </p>
+        <div class="hero-actions" aria-label="Ações principais">
+          <a class="button primary" href="#registrar">Registrar ocorrência</a>
+          <a class="button secondary" href="#casos">Ver casos ativos</a>
+        </div>
+        <dl class="hero-stats" aria-label="Indicadores do RadarPet">
+          <div>
+            <dt>128</dt>
+            <dd>casos mapeados</dd>
+          </div>
+          <div>
+            <dt>42</dt>
+            <dd>voluntários por perto</dd>
+          </div>
+          <div>
+            <dt>18min</dt>
+            <dd>tempo médio de resposta</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="hero-visual" aria-label="Voluntário registrando um animal no RadarPet">
+        <img src="assets/radarpet-hero.jpg" alt="Voluntário usando celular para registrar um cachorro encontrado na rua" />
+        <div class="floating-alert">
+          <strong>Alerta próximo</strong>
+          <span>Cachorro perdido a 850 m</span>
+        </div>
+      </div>
+    </section>
+  </header>
+
+  <main>
+    <section id="radar" class="section radar-section">
+      <div class="section-heading">
+        <span class="eyebrow">Mapa vivo</span>
+        <h2>Do alerta à ajuda organizada</h2>
+        <p>
+          O RadarPet transforma uma denúncia isolada em um fluxo claro para quem pode
+          acolher, transportar, doar, divulgar ou resgatar.
+        </p>
+      </div>
+
+      <div class="radar-grid">
+        <div class="radar-panel" aria-label="Simulação de radar de casos">
+          <div class="radar-map">
+            <span class="pulse one"></span>
+            <span class="pulse two"></span>
+            <span class="pulse three"></span>
+            <span class="pin urgent">SOS</span>
+            <span class="pin foster">LT</span>
+            <span class="pin food">Ração</span>
+          </div>
+        </div>
+
+        <div class="workflow">
+          <article>
+            <span>01</span>
+            <h3>Localize</h3>
+            <p>Informe rua, bairro, cidade e ponto de referência para reduzir ruído no resgate.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>Classifique</h3>
+            <p>Marque urgência, espécie, condição e tipo de ajuda necessária.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Conecte</h3>
+            <p>O caso aparece para pessoas e instituições com capacidade de ação naquela região.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="casos" class="section cases-section">
+      <div class="section-heading compact">
+        <span class="eyebrow">Casos ativos</span>
+        <h2>Priorize pelo que precisa acontecer agora</h2>
+      </div>
+
+      <div class="case-board">
+        <article class="case-card urgent-card">
+          <div class="case-top">
+            <span class="badge danger">Urgente</span>
+            <small>Blumenau - SC</small>
+          </div>
+          <h3>Cachorro ferido no centro</h3>
+          <p>Precisa de transporte, avaliação veterinária e alguém para acompanhar o atendimento.</p>
+          <div class="case-actions">
+            <span>3 voluntários olhando</span>
+            <a href="#registrar">Ajudar</a>
+          </div>
+        </article>
+
+        <article class="case-card">
+          <div class="case-top">
+            <span class="badge warm">Lar temporário</span>
+            <small>Itajaí - SC</small>
+          </div>
+          <h3>Filhotes encontrados em caixa</h3>
+          <p>Estão seguros por poucas horas. Precisam de acolhimento e ração úmida.</p>
+          <div class="case-actions">
+            <span>8 compartilhamentos</span>
+            <a href="#registrar">Acolher</a>
+          </div>
+        </article>
+
+        <article class="case-card">
+          <div class="case-top">
+            <span class="badge good">Em adoção</span>
+            <small>Joinville - SC</small>
+          </div>
+          <h3>Mel, cachorra adulta dócil</h3>
+          <p>Resgatada, vacinada e pronta para uma adoção responsável com entrevista.</p>
+          <div class="case-actions">
+            <span>Perfil verificado</span>
+            <a href="#registrar">Conhecer</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="pedigree" class="section pedigree-section">
+      <div class="section-heading">
+        <span class="eyebrow">Match responsável</span>
+        <h2>Pedigree com verificação e critérios claros</h2>
+        <p>
+          Para tutores que buscam conexões por raça, documentação, saúde, cidade e objetivo,
+          com foco em responsabilidade e transparência.
+        </p>
+      </div>
+
+      <div class="match-layout">
+        <aside class="filters" aria-label="Filtros de match pedigree">
+          <h3>Filtros</h3>
+          <label>
+            Espécie
+            <select>
+              <option>Cachorros</option>
+              <option>Gatos</option>
+              <option>Todos</option>
+            </select>
+          </label>
+          <label>
+            Raça
+            <select>
+              <option>Golden Retriever</option>
+              <option>Spitz Alemão</option>
+              <option>Maine Coon</option>
+              <option>Persa</option>
+            </select>
+          </label>
+          <label>
+            Distância
+            <select>
+              <option>Até 25 km</option>
+              <option>Até 50 km</option>
+              <option>Até 100 km</option>
+            </select>
+          </label>
+          <button type="button">Buscar matches</button>
+        </aside>
+
+        <div class="match-list">
+          <article class="match-card">
+            <div class="match-avatar">GR</div>
+            <div>
+              <div class="match-meta">
+                <span>96% compatível</span>
+                <small>CBKC conferido</small>
+              </div>
+              <h3>Thor da Serra</h3>
+              <p>Golden Retriever, vacinas em dia, exames recentes e linhagem documentada.</p>
+            </div>
+          </article>
+          <article class="match-card">
+            <div class="match-avatar teal">SP</div>
+            <div>
+              <div class="match-meta">
+                <span>89% compatível</span>
+                <small>Microchip</small>
+              </div>
+              <h3>Luna Snow</h3>
+              <p>Spitz Alemão com histórico de saúde, tutor verificado e critérios de match claros.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="registrar" class="section register-section">
+      <div class="section-heading compact">
+        <span class="eyebrow">Cadastro rápido</span>
+        <h2>Envie um novo registro</h2>
+      </div>
+
+      <div class="forms-grid">
+        <form class="form-card">
+          <h3>Ocorrência animal</h3>
+          <label>
+            Identificação
+            <input type="text" placeholder="Ex: cachorro caramelo ferido" />
+          </label>
+          <label>
+            Localização
+            <input type="text" placeholder="Rua, bairro e cidade" />
+          </label>
+          <label>
+            Situação
+            <select>
+              <option>Animal ferido</option>
+              <option>Animal abandonado</option>
+              <option>Precisa de lar temporário</option>
+              <option>Precisa de ração</option>
+              <option>Disponível para adoção</option>
+            </select>
+          </label>
+          <label>
+            Descrição
+            <textarea placeholder="Conte o que aconteceu e qual ajuda é necessária"></textarea>
+          </label>
+          <button type="button">Enviar ocorrência</button>
+        </form>
+
+        <form class="form-card accent-form">
+          <h3>Cadastro pedigree</h3>
+          <label>
+            Nome do animal
+            <input type="text" placeholder="Ex: Mel do Vale" />
+          </label>
+          <label>
+            Raça e registro
+            <input type="text" placeholder="Ex: Golden Retriever, CBKC 000000" />
+          </label>
+          <label>
+            Objetivo
+            <select>
+              <option>Rede de tutores pedigree</option>
+              <option>Companhia da mesma raça</option>
+              <option>Reprodução responsável</option>
+            </select>
+          </label>
+          <label>
+            Saúde e linhagem
+            <textarea placeholder="Informe exames, vacinas, linhagem e critérios importantes"></textarea>
+          </label>
+          <button type="button">Enviar para análise</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <strong>RadarPet</strong>
+    <span>Conectando pessoas para proteger animais perto de você.</span>
+  </footer>
+</body>
+</html>
