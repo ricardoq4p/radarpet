@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="assets/icon-192.svg">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=5">
+<link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
 <div class="phone">
@@ -229,6 +229,11 @@
       <div class="upload-feedback" id="upload-feedback">Selecione uma imagem para enviar ao Cloudinary.</div>
     </div>
 
+    <label class="consent-row">
+      <input id="legal-consent" name="legalConsent" type="checkbox" required>
+      <span>Li e concordo com os <a href="termos.html" target="_blank" rel="noopener noreferrer">Termos de Uso</a> e <a href="privacidade.html" target="_blank" rel="noopener noreferrer">Política de Privacidade</a>.</span>
+    </label>
+
     <button class="modal-submit" id="report-submit-button" type="submit">Salvar pet</button>
   </form>
 </div>
@@ -248,6 +253,11 @@
     <button class="modal-submit" type="button" data-action="close-info">Entendi</button>
   </section>
 </div>
-<script src="app.js?v=5"></script>
+<footer class="app-footer">
+  <a href="termos.html" target="_blank" rel="noopener noreferrer">Termos de Uso</a>
+  <span>•</span>
+  <a href="privacidade.html" target="_blank" rel="noopener noreferrer">Política de Privacidade</a>
+</footer>
+<script src="app.js?v=6"></script>
 </body>
 </html>

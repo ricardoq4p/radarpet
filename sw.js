@@ -1,7 +1,9 @@
-const CACHE_NAME = "radarpet-app-v5";
+const CACHE_NAME = "radarpet-app-v6";
 const APP_SHELL = [
   "./",
   "index.html",
+  "termos.html",
+  "privacidade.html",
   "style.css",
   "app.js",
   "manifest.json",

@@ -427,6 +427,7 @@ function setupReportForm() {
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
+    const consent = document.getElementById("legal-consent");
 
     if (state.upload.status === "uploading") {
       showToast("Aguarde o término do upload da imagem.");
@@ -442,6 +443,11 @@ function setupReportForm() {
     const pet = buildPetPayload(new FormData(form));
     if (!isPetValid(pet)) {
       showToast("Formulário incompleto.");
+      return;
+    }
+
+    if (!consent?.checked) {
+      showToast("VocÃª precisa aceitar os Termos de Uso e a PolÃ­tica de Privacidade.");
       return;
     }
 
