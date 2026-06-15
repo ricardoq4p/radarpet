@@ -4,44 +4,38 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RadarPet - App</title>
-<meta name="description" content="RadarPet em formato app para alertas, achados e perdidos, ONGs e PetMatch.">
+<meta name="description" content="RadarPet em formato app para cadastro e localização de pets com upload de fotos.">
 <meta name="theme-color" content="#FF7A2F">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="assets/icon-192.svg">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=4">
+<link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
 <div class="phone">
-  <!-- STATUS BAR -->
   <div class="status-bar">
     <span>9:41</span>
     <span>●●● 100%</span>
   </div>
 
-  <!-- HEADER -->
   <div class="header">
     <div class="logo-wrap">
       <div class="logo-icon">📍</div>
       <div class="logo-text">Radar<span>Pet</span></div>
     </div>
     <div class="header-icons">
-      <!-- Bell -->
       <button class="icon-btn" type="button" data-action="notifications" aria-label="Notificações"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
-      <!-- Chat -->
       <button class="icon-btn" type="button" data-action="messages" aria-label="Mensagens"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
     </div>
   </div>
 
-  <!-- SEARCH -->
   <div class="search-wrap">
     <div class="search-bar">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF9A5C" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input id="app-search" type="search" placeholder="Buscar pets, ONGs, raças..." aria-label="Buscar pets, ONGs e raças">
+      <input id="app-search" type="search" placeholder="Buscar pets, cidades ou raças..." aria-label="Buscar pets cadastrados">
     </div>
   </div>
 
-  <!-- TABS -->
   <div class="nav-tabs">
     <div class="tab active" onclick="showScreen('feed')"><span class="tab-icon">🏠</span>Feed</div>
     <div class="tab" onclick="showScreen('mapa')"><span class="tab-icon">📍</span>Mapa</div>
@@ -50,141 +44,103 @@
     <div class="tab" onclick="showScreen('ongs')"><span class="tab-icon">❤️</span>ONGs</div>
   </div>
 
-  <!-- ===== FEED ===== -->
   <div class="screen active" id="screen-feed">
-    <!-- Stories -->
     <div class="story-row">
-      <div class="story" data-action="story" data-story="Rex">
-        <div class="story-ring">🐕</div>
-        <div class="story-name">Rex</div>
-      </div>
-      <div class="story" data-action="story" data-story="Luna">
-        <div class="story-ring">🐱</div>
-        <div class="story-name">Luna</div>
-      </div>
-      <div class="story" data-action="story" data-story="Bolinha">
-        <div class="story-ring">🐭</div>
-        <div class="story-name">Bolinha</div>
-      </div>
-      <div class="story" data-action="story" data-story="Loró">
-        <div class="story-ring">🦜</div>
-        <div class="story-name">Loró</div>
-      </div>
-      <div class="story" data-action="story" data-story="PetMatch">
-        <div class="story-ring match-ring">🐩</div>
-        <div class="story-name">Match!</div>
-      </div>
-      <div class="story" data-action="story" data-story="Fofinha">
-        <div class="story-ring">🐰</div>
-        <div class="story-name">Fofinha</div>
-      </div>
+      <button class="story shortcut-story" type="button" data-action="open-report">
+        <div class="story-ring">➕</div>
+        <div class="story-name">Cadastrar</div>
+      </button>
+      <button class="story shortcut-story" type="button" data-action="focus-search">
+        <div class="story-ring">🔎</div>
+        <div class="story-name">Buscar</div>
+      </button>
+      <button class="story shortcut-story" type="button" data-action="show-screen" data-target-screen="mapa">
+        <div class="story-ring">🗺️</div>
+        <div class="story-name">Mapa</div>
+      </button>
+      <button class="story shortcut-story" type="button" data-action="show-screen" data-target-screen="achados">
+        <div class="story-ring">🐾</div>
+        <div class="story-name">Status</div>
+      </button>
+      <button class="story shortcut-story" type="button" data-action="show-screen" data-target-screen="ongs">
+        <div class="story-ring match-ring">❤️</div>
+        <div class="story-name">ONGs</div>
+      </button>
     </div>
 
-    <!-- Alert banner -->
-    <div class="alert-banner" data-action="show-map-alert">
-      <div class="alert-icon">🚨</div>
+    <div class="alert-banner" data-action="open-report">
+      <div class="alert-icon">📸</div>
       <div class="alert-text">
-        <div class="alert-title">Animal em risco próximo!</div>
-        <div class="alert-sub">Cachorro encontrado — 280m de você</div>
+        <div class="alert-title">Cadastre um pet com foto</div>
+        <div class="alert-sub">Salve os dados no app e mantenha tudo disponível no seu celular</div>
       </div>
-      <button class="alert-action" type="button">Ver</button>
+      <button class="alert-action" type="button">Cadastrar</button>
     </div>
 
     <div class="feed" id="feed-list"></div>
   </div>
 
-  <!-- ===== MAPA ===== -->
   <div class="screen screen-map" id="screen-mapa">
     <div class="filter-row">
       <button class="chip on" type="button" data-map-filter="all">Todos</button>
-      <button class="chip" type="button" data-map-filter="found">Encontrados</button>
       <button class="chip" type="button" data-map-filter="lost">Perdidos</button>
-      <button class="chip" type="button" data-map-filter="alert">Alertas</button>
-      <button class="chip" type="button" data-map-filter="ong">ONGs</button>
+      <button class="chip" type="button" data-map-filter="found">Encontrados</button>
+      <button class="chip" type="button" data-map-filter="available">Disponíveis</button>
     </div>
     <div class="big-map" id="radar-map" data-action="map">
-      <svg width="100%" height="100%" viewBox="0 0 316 200">
+      <svg width="100%" height="100%" viewBox="0 0 316 200" aria-hidden="true">
         <rect width="316" height="200" fill="#E8F5E9"/>
-        <!-- Roads -->
         <rect x="0" y="88" width="316" height="14" fill="#CFD8DC" opacity="0.7"/>
         <rect x="110" y="0" width="14" height="200" fill="#CFD8DC" opacity="0.7"/>
         <rect x="0" y="148" width="316" height="10" fill="#CFD8DC" opacity="0.5"/>
         <rect x="60" y="0" width="8" height="200" fill="#CFD8DC" opacity="0.4"/>
         <rect x="210" y="0" width="8" height="200" fill="#CFD8DC" opacity="0.4"/>
-        <!-- Tree blocks -->
         <rect x="20" y="20" width="30" height="30" rx="6" fill="#A5D6A7" opacity="0.5"/>
         <rect x="160" y="110" width="40" height="28" rx="6" fill="#A5D6A7" opacity="0.5"/>
-        <!-- Pins -->
-        <!-- Found dog -->
-        <ellipse cx="80" cy="66" rx="14" ry="14" fill="white" opacity="0.92"/>
-        <text x="80" y="70" text-anchor="middle" font-size="16">🐕</text>
-        <circle cx="80" cy="66" r="16" fill="none" stroke="#16A34A" stroke-width="2"/>
-        <!-- Lost cat -->
-        <ellipse cx="185" cy="115" rx="14" ry="14" fill="white" opacity="0.92"/>
-        <text x="185" y="119" text-anchor="middle" font-size="16">🐱</text>
-        <circle cx="185" cy="115" r="16" fill="none" stroke="#DC2626" stroke-width="2"/>
-        <!-- Alert -->
-        <ellipse cx="250" cy="52" rx="14" ry="14" fill="white" opacity="0.92"/>
-        <text x="250" y="57" text-anchor="middle" font-size="15">⚠️</text>
-        <!-- ONG -->
-        <ellipse cx="145" cy="162" rx="14" ry="14" fill="white" opacity="0.92"/>
-        <text x="145" y="167" text-anchor="middle" font-size="15">❤️</text>
-        <!-- Mouse -->
-        <ellipse cx="55" cy="150" rx="13" ry="13" fill="white" opacity="0.92"/>
-        <text x="55" y="154" text-anchor="middle" font-size="14">🐭</text>
-        <!-- Me -->
         <circle cx="130" cy="95" r="9" fill="#FF7A2F" stroke="white" stroke-width="2.5"/>
-        <text x="130" y="99" text-anchor="middle" font-size="8" fill="white" font-weight="bold">Eu</text>
-        <!-- Pulse ring -->
+        <text x="130" y="99" text-anchor="middle" font-size="8" fill="white" font-weight="bold">Você</text>
         <circle cx="130" cy="95" r="18" fill="none" stroke="#FF7A2F" stroke-width="1.5" opacity="0.3"/>
       </svg>
+      <div class="map-overlay">
+        <strong>RadarPet por cidade</strong>
+        <span>Os pets cadastrados aparecem listados abaixo do mapa.</span>
+      </div>
     </div>
-    <div class="section-label">Próximos de você</div>
+    <div class="section-label">Pets no radar</div>
     <div class="map-nearby-list" id="map-nearby-list"></div>
   </div>
 
-  <!-- ===== ACHADOS & PERDIDOS ===== -->
   <div class="screen" id="screen-achados">
     <div style="padding: 10px 12px 4px;">
       <div class="filter-row" style="padding: 0; gap: 6px;">
         <button class="chip on" type="button" data-lost-filter="all">Todos</button>
         <button class="chip" type="button" data-lost-filter="lost">Perdidos</button>
         <button class="chip" type="button" data-lost-filter="found">Encontrados</button>
+        <button class="chip" type="button" data-lost-filter="available">Disponíveis</button>
       </div>
     </div>
-    <div class="section-label">Casos em aberto</div>
+    <div class="section-label">Pets cadastrados</div>
     <div class="lf-list" id="lost-found-list"></div>
     <div style="padding: 4px 12px 70px; text-align: center;">
-      <button class="report-btn" type="button" onclick="openReportModal()">+ Reportar pet perdido</button>
+      <button class="report-btn" type="button" onclick="openReportModal()">Cadastrar Pet</button>
     </div>
   </div>
 
-  <!-- ===== PETMATCH ===== -->
   <div class="screen" id="screen-match">
     <div style="padding: 10px 12px 4px;">
       <div style="background: linear-gradient(135deg, #FCE7F3, #FDF2F8); border-radius: 14px; padding: 12px 13px; border: 1px solid #FBCFE8;">
         <div style="font-size: 13px; font-weight: 800; color: #9D174D;">💕 PetMatch</div>
-        <div style="font-size: 11px; color: #F472B6; font-weight: 600; margin-top: 2px;">Conecte pets da mesma raça para acasalamento responsável</div>
+        <div style="font-size: 11px; color: #F472B6; font-weight: 600; margin-top: 2px;">Tela preservada para futuras etapas do RadarPet</div>
       </div>
     </div>
-    <div class="filter-row">
-      <button class="chip on" type="button" data-match-filter="all">Todos</button>
-      <button class="chip" type="button" data-match-filter="Cachorro">Cachorros</button>
-      <button class="chip" type="button" data-match-filter="Gato">Gatos</button>
-      <button class="chip" type="button" data-match-filter="Coelho">Coelhos</button>
-      <button class="chip" type="button" data-match-filter="Ave">Aves</button>
-    </div>
-    <div class="section-label">Pets disponíveis perto de você</div>
     <div class="match-list" id="match-list"></div>
   </div>
 
-  <!-- ===== ONGs ===== -->
   <div class="screen" id="screen-ongs">
     <div class="section-label">ONGs parceiras</div>
     <div class="ong-list" id="ong-list"></div>
   </div>
 
-  <!-- BOTTOM NAV -->
   <div class="bottom-nav">
     <div class="bnav-item active" id="bnav-feed" onclick="showScreen('feed')"><span class="bnav-icon">🏠</span>Início</div>
     <div class="bnav-item" id="bnav-mapa" onclick="showScreen('mapa')"><span class="bnav-icon">🗺️</span>Mapa</div>
@@ -200,46 +156,85 @@
   <form class="report-modal" id="report-form">
     <div class="modal-head">
       <div>
-        <strong>Reportar pet</strong>
-        <span>Crie um alerta local no app</span>
+        <strong>Cadastrar pet</strong>
+        <span>Preencha os dados e envie a foto para o RadarPet</span>
       </div>
-      <button type="button" class="modal-close" onclick="closeReportModal()" aria-label="Fechar">x</button>
+      <button type="button" class="modal-close" onclick="closeReportModal()" aria-label="Fechar">×</button>
     </div>
+
     <label>
-      Nome ou identificação
-      <input name="name" type="text" placeholder="Ex: Cão caramelo" required>
+      Nome
+      <input name="name" type="text" placeholder="Ex: Thor" required>
     </label>
+
     <label>
-      Tipo
-      <select name="type">
-        <option value="lost">Perdido</option>
-        <option value="found">Encontrado</option>
-        <option value="adopt">Adoção</option>
-        <option value="alert">Alerta</option>
+      Espécie
+      <select name="species" required>
+        <option value="">Selecione</option>
+        <option value="Cachorro">Cachorro</option>
+        <option value="Gato">Gato</option>
+        <option value="Outro">Outro</option>
       </select>
     </label>
+
     <label>
-      Animal
-      <select name="emoji">
-        <option value="🐕">Cachorro</option>
-        <option value="🐱">Gato</option>
-        <option value="🐭">Rato</option>
-        <option value="🐰">Coelho</option>
-        <option value="🦜">Ave</option>
-      </select>
+      Raça
+      <input name="breed" type="text" placeholder="Ex: SRD" required>
     </label>
+
+    <div class="form-grid-two">
+      <label>
+        Sexo
+        <select name="sex" required>
+          <option value="">Selecione</option>
+          <option value="Macho">Macho</option>
+          <option value="Fêmea">Fêmea</option>
+        </select>
+      </label>
+      <label>
+        Status
+        <select name="status" required>
+          <option value="">Selecione</option>
+          <option value="Perdido">Perdido</option>
+          <option value="Encontrado">Encontrado</option>
+          <option value="Disponível">Disponível</option>
+        </select>
+      </label>
+    </div>
+
     <label>
-      Localização
-      <input name="location" type="text" placeholder="Bairro, cidade" required>
+      Cor predominante
+      <input name="color" type="text" placeholder="Ex: Caramelo" required>
     </label>
+
     <label>
-      Descrição
-      <textarea name="description" placeholder="Conte o que aconteceu" required></textarea>
+      Cidade
+      <input name="city" type="text" placeholder="Ex: Blumenau, SC" required>
     </label>
-    <button class="modal-submit" type="submit">Salvar alerta</button>
+
+    <label>
+      Telefone para contato
+      <input name="phone" type="tel" placeholder="(47) 99999-9999" required>
+    </label>
+
+    <label>
+      Foto
+      <input id="pet-photo-input" name="photo" type="file" accept="image/*" required>
+    </label>
+
+    <div class="upload-preview-wrap">
+      <div class="upload-preview" id="upload-preview">
+        <span>Pré-visualização da foto</span>
+      </div>
+      <div class="upload-feedback" id="upload-feedback">Selecione uma imagem para enviar ao Cloudinary.</div>
+    </div>
+
+    <button class="modal-submit" id="report-submit-button" type="submit">Salvar pet</button>
   </form>
 </div>
+
 <div class="toast" id="toast" role="status"></div>
+
 <div class="info-modal-backdrop" id="info-modal" aria-hidden="true">
   <section class="info-modal" role="dialog" aria-modal="true" aria-labelledby="info-modal-title">
     <div class="modal-head">
@@ -247,12 +242,12 @@
         <strong id="info-modal-title">RadarPet</strong>
         <span id="info-modal-subtitle">Detalhes</span>
       </div>
-      <button type="button" class="modal-close" data-action="close-info" aria-label="Fechar">x</button>
+      <button type="button" class="modal-close" data-action="close-info" aria-label="Fechar">×</button>
     </div>
     <p id="info-modal-body"></p>
     <button class="modal-submit" type="button" data-action="close-info">Entendi</button>
   </section>
 </div>
-<script src="app.js?v=4"></script>
+<script src="app.js?v=5"></script>
 </body>
 </html>
