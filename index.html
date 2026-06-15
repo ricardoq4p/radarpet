@@ -1,299 +1,806 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RadarPet | Ajuda animal perto de você</title>
-  <meta
-    name="description"
-    content="RadarPet conecta pessoas, voluntários e protetores para registrar animais em risco, organizar resgates e encontrar matches responsáveis."
-  />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RadarPet — Protótipo</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Nunito', sans-serif;
+  background: linear-gradient(135deg, #FFF0E0 0%, #FFE8D6 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 16px 60px;
+}
+
+h1 {
+  font-size: 13px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #FF9A5C;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+/* PHONE */
+.phone {
+  width: 340px;
+  border-radius: 40px;
+  background: #FFF8F4;
+  box-shadow: 0 24px 60px rgba(255,122,47,0.18), 0 4px 16px rgba(0,0,0,0.08);
+  overflow: hidden;
+  border: 2px solid #FFD4B5;
+  position: relative;
+}
+
+/* STATUS BAR */
+.status-bar {
+  background: #FF7A2F;
+  padding: 10px 20px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.status-bar span { color: white; font-size: 11px; font-weight: 800; }
+
+/* HEADER */
+.header {
+  background: #FF7A2F;
+  padding: 6px 16px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo-wrap { display: flex; align-items: center; gap: 8px; }
+.logo-icon {
+  width: 36px; height: 36px;
+  background: white;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.logo-text { font-size: 22px; font-weight: 900; color: white; letter-spacing: -0.5px; }
+.logo-text span { color: #FFE0C8; }
+.header-icons { display: flex; gap: 14px; }
+.header-icons svg { width: 22px; height: 22px; stroke: white; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* SEARCH */
+.search-wrap {
+  background: #FF7A2F;
+  padding: 0 14px 14px;
+}
+.search-bar {
+  background: #FFF8F4;
+  border-radius: 22px;
+  padding: 9px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #FF9A5C;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* TABS */
+.nav-tabs {
+  display: flex;
+  background: white;
+  border-bottom: 2px solid #FFE8D6;
+  overflow-x: auto;
+}
+.nav-tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex: 1;
+  min-width: 60px;
+  text-align: center;
+  padding: 8px 4px 6px;
+  font-size: 9px;
+  font-weight: 800;
+  color: #FFAD80;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+.tab.active { color: #FF7A2F; border-bottom: 3px solid #FF7A2F; }
+.tab-icon { font-size: 17px; }
+
+/* SCREENS */
+.screen { display: none; }
+.screen.active { display: block; }
+.feed { padding: 12px; display: flex; flex-direction: column; gap: 10px; padding-bottom: 70px; }
+
+/* CARD */
+.card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(255,122,47,0.08);
+  border: 1px solid #FFE8D6;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 13px;
+}
+.avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: #FFE0CC;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 800; color: #FF7A2F;
+  flex-shrink: 0;
+  border: 2px solid #FFD4B5;
+}
+.card-user { flex: 1; }
+.card-user-name { font-size: 12px; font-weight: 800; color: #2D2D2D; }
+.card-user-sub { font-size: 10px; color: #FFAD80; font-weight: 600; }
+.badge {
+  font-size: 9px; font-weight: 800;
+  padding: 3px 9px; border-radius: 20px;
+  text-transform: uppercase; letter-spacing: 0.4px;
+}
+.badge-found { background: #D1FAE5; color: #065F46; }
+.badge-lost { background: #FEE2E2; color: #991B1B; }
+.badge-adopt { background: #DBEAFE; color: #1E3A8A; }
+.badge-alert { background: #FEF3C7; color: #92400E; }
+.badge-match { background: #FCE7F3; color: #9D174D; }
+
+.card-img {
+  width: 100%; height: 145px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 52px;
+  background: linear-gradient(135deg, #FFE8D6, #FFD4B5);
+}
+.card-body { padding: 10px 13px; }
+.card-title { font-size: 13px; font-weight: 800; color: #2D2D2D; margin-bottom: 3px; }
+.card-desc { font-size: 11px; color: #888; line-height: 1.5; font-weight: 600; }
+.card-location {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 10px; color: #FF7A2F; font-weight: 700; margin-top: 6px;
+}
+.card-actions {
+  display: flex;
+  border-top: 1px solid #FFE8D6;
+  margin-top: 8px;
+}
+.action-btn {
+  flex: 1; padding: 9px 4px;
+  text-align: center; font-size: 11px; font-weight: 700;
+  color: #FFAD80; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+  border: none; background: none; font-family: 'Nunito', sans-serif;
+}
+.action-btn.primary { color: #FF7A2F; }
+
+/* SECTION LABEL */
+.section-label {
+  font-size: 11px; font-weight: 800;
+  color: #FFAD80; text-transform: uppercase;
+  letter-spacing: 1px; padding: 10px 14px 5px;
+}
+
+/* MAP */
+.screen-map { padding-bottom: 70px; }
+.filter-row {
+  display: flex; gap: 6px; padding: 10px 12px;
+  overflow-x: auto;
+}
+.filter-row::-webkit-scrollbar { display: none; }
+.chip {
+  background: white;
+  border: 1.5px solid #FFD4B5;
+  border-radius: 20px; padding: 5px 13px;
+  font-size: 10px; font-weight: 800;
+  color: #FFAD80; white-space: nowrap;
+  cursor: pointer; flex-shrink: 0;
+  font-family: 'Nunito', sans-serif;
+}
+.chip.on { background: #FF7A2F; color: white; border-color: #FF7A2F; }
+.big-map {
+  margin: 0 12px; border-radius: 16px;
+  overflow: hidden; height: 200px;
+  border: 1.5px solid #FFD4B5;
+  box-shadow: 0 2px 12px rgba(255,122,47,0.1);
+}
+
+/* LOST & FOUND */
+.lf-list { padding: 0 12px; display: flex; flex-direction: column; gap: 8px; padding-bottom: 70px; }
+.lf-card {
+  background: white; border-radius: 14px;
+  padding: 11px 13px; display: flex;
+  gap: 11px; align-items: center;
+  box-shadow: 0 2px 10px rgba(255,122,47,0.07);
+  border: 1px solid #FFE8D6;
+}
+.lf-pet-img {
+  width: 52px; height: 52px; border-radius: 12px;
+  background: #FFE8D6; display: flex;
+  align-items: center; justify-content: center;
+  font-size: 28px; flex-shrink: 0;
+}
+.lf-info { flex: 1; }
+.lf-name { font-size: 13px; font-weight: 800; color: #2D2D2D; }
+.lf-detail { font-size: 10px; color: #FFAD80; margin-top: 2px; font-weight: 600; }
+.lf-status { font-size: 10px; font-weight: 800; margin-top: 4px; }
+.status-lost { color: #DC2626; }
+.status-found { color: #16A34A; }
+
+/* PETMATCH */
+.match-list { padding: 0 12px; display: flex; flex-direction: column; gap: 10px; padding-bottom: 70px; }
+.match-card {
+  background: white; border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(255,90,138,0.1);
+  border: 1px solid #FCE7F3;
+}
+.match-header { padding: 11px 13px; display: flex; align-items: center; gap: 10px; }
+.match-img {
+  width: 54px; height: 54px; border-radius: 12px;
+  background: linear-gradient(135deg, #FCE7F3, #FBCFE8);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; flex-shrink: 0;
+  border: 2px solid #FBCFE8;
+}
+.match-info { flex: 1; }
+.match-name { font-size: 13px; font-weight: 800; color: #2D2D2D; }
+.match-breed { font-size: 10px; color: #F472B6; font-weight: 700; }
+.match-detail { font-size: 10px; color: #FFAD80; margin-top: 2px; font-weight: 600; }
+.match-btn {
+  background: linear-gradient(135deg, #F472B6, #EC4899);
+  color: white; border: none; border-radius: 20px;
+  padding: 7px 14px; font-size: 11px; font-weight: 800;
+  cursor: pointer; font-family: 'Nunito', sans-serif;
+  box-shadow: 0 2px 8px rgba(236,72,153,0.3);
+}
+.match-tags { padding: 0 13px 11px; display: flex; gap: 6px; flex-wrap: wrap; }
+.match-tag {
+  background: #FDF2F8; border: 1px solid #FBCFE8;
+  border-radius: 20px; padding: 3px 10px;
+  font-size: 9px; font-weight: 800; color: #BE185D;
+}
+
+/* ONGs */
+.ong-list { padding: 0 12px; display: flex; flex-direction: column; gap: 8px; padding-bottom: 70px; }
+.ong-card {
+  background: white; border-radius: 14px; padding: 13px;
+  box-shadow: 0 2px 10px rgba(255,122,47,0.07);
+  border: 1px solid #FFE8D6;
+}
+.ong-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.ong-avatar {
+  width: 42px; height: 42px; border-radius: 12px;
+  background: #FFE8D6; display: flex;
+  align-items: center; justify-content: center; font-size: 20px;
+}
+.ong-name { font-size: 13px; font-weight: 800; color: #2D2D2D; }
+.ong-city { font-size: 10px; color: #FFAD80; font-weight: 600; }
+.ong-stats { display: flex; gap: 14px; }
+.ong-stat { font-size: 10px; color: #FFAD80; font-weight: 600; }
+.ong-stat strong { color: #2D2D2D; font-size: 14px; display: block; font-weight: 800; }
+.ong-btn {
+  background: #FF7A2F; color: white; border: none;
+  border-radius: 20px; padding: 6px 14px;
+  font-size: 11px; font-weight: 800; cursor: pointer;
+  margin-left: auto; font-family: 'Nunito', sans-serif;
+  box-shadow: 0 2px 8px rgba(255,122,47,0.3);
+}
+.ong-btn.following {
+  background: white; color: #FF7A2F;
+  border: 1.5px solid #FF7A2F; box-shadow: none;
+}
+
+/* BOTTOM NAV */
+.bottom-nav {
+  display: flex;
+  border-top: 2px solid #FFE8D6;
+  background: white;
+  padding: 6px 0 10px;
+  position: sticky;
+  bottom: 0;
+}
+.bnav-item {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; gap: 2px;
+  font-size: 9px; font-weight: 800;
+  color: #FFAD80; cursor: pointer;
+  padding: 4px 0; letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+.bnav-item.active { color: #FF7A2F; }
+.bnav-icon { font-size: 19px; }
+.bnav-center {
+  width: 46px; height: 46px;
+  background: #FF7A2F; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; margin-top: -16px;
+  box-shadow: 0 4px 14px rgba(255,122,47,0.4);
+  border: 3px solid white;
+}
+
+/* STORY ROW */
+.story-row {
+  display: flex; gap: 10px; padding: 10px 12px 4px;
+  overflow-x: auto;
+}
+.story-row::-webkit-scrollbar { display: none; }
+.story {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 4px; flex-shrink: 0;
+}
+.story-ring {
+  width: 52px; height: 52px; border-radius: 50%;
+  border: 2.5px solid #FF7A2F; padding: 2px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; background: #FFE8D6;
+}
+.story-ring.match-ring { border-color: #EC4899; background: #FDF2F8; }
+.story-name { font-size: 9px; font-weight: 700; color: #888; text-align: center; max-width: 52px; }
+
+/* FAB */
+.fab-wrap { position: relative; }
+
+/* ALERT BANNER */
+.alert-banner {
+  background: linear-gradient(135deg, #FF7A2F, #FF5A1F);
+  margin: 10px 12px 0;
+  border-radius: 14px;
+  padding: 10px 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 3px 12px rgba(255,122,47,0.25);
+}
+.alert-icon { font-size: 22px; }
+.alert-text { flex: 1; }
+.alert-title { font-size: 12px; font-weight: 800; color: white; }
+.alert-sub { font-size: 10px; color: #FFE0CC; font-weight: 600; margin-top: 1px; }
+.alert-action { font-size: 10px; font-weight: 800; color: white; background: rgba(255,255,255,0.25); padding: 4px 10px; border-radius: 10px; }
+</style>
 </head>
 <body>
-  <header class="site-header">
-    <nav class="nav" aria-label="Navegação principal">
-      <a class="brand" href="#inicio" aria-label="RadarPet">
-        <span class="brand-mark">RP</span>
-        <span>RadarPet</span>
-      </a>
-      <div class="nav-links">
-        <a href="#radar">Radar</a>
-        <a href="#casos">Casos</a>
-        <a href="#pedigree">Pedigree</a>
-        <a href="#registrar">Registrar</a>
-      </div>
-      <a class="nav-action" href="#registrar">Enviar alerta</a>
-    </nav>
 
-    <section id="inicio" class="hero">
-      <div class="hero-copy">
-        <span class="eyebrow">Rede colaborativa de proteção animal</span>
-        <h1>RadarPet</h1>
-        <p>
-          Registre animais em situação de risco, encontre ajuda por região e conecte
-          protetores, voluntários e tutores responsáveis em poucos minutos.
-        </p>
-        <div class="hero-actions" aria-label="Ações principais">
-          <a class="button primary" href="#registrar">Registrar ocorrência</a>
-          <a class="button secondary" href="#casos">Ver casos ativos</a>
+<h1>✦ RadarPet — Protótipo Interativo ✦</h1>
+
+<div class="phone">
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span>9:41</span>
+    <span>●●● 100%</span>
+  </div>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-wrap">
+      <div class="logo-icon">📍</div>
+      <div class="logo-text">Radar<span>Pet</span></div>
+    </div>
+    <div class="header-icons">
+      <!-- Bell -->
+      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <!-- Chat -->
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-wrap">
+    <div class="search-bar">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF9A5C" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Buscar pets, ONGs, raças…
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="nav-tabs">
+    <div class="tab active" onclick="showScreen('feed')"><span class="tab-icon">🏠</span>Feed</div>
+    <div class="tab" onclick="showScreen('mapa')"><span class="tab-icon">📍</span>Mapa</div>
+    <div class="tab" onclick="showScreen('achados')"><span class="tab-icon">🔍</span>Achados</div>
+    <div class="tab" onclick="showScreen('match')"><span class="tab-icon">💕</span>PetMatch</div>
+    <div class="tab" onclick="showScreen('ongs')"><span class="tab-icon">❤️</span>ONGs</div>
+  </div>
+
+  <!-- ===== FEED ===== -->
+  <div class="screen active" id="screen-feed">
+    <!-- Stories -->
+    <div class="story-row">
+      <div class="story">
+        <div class="story-ring">🐕</div>
+        <div class="story-name">Rex</div>
+      </div>
+      <div class="story">
+        <div class="story-ring">🐱</div>
+        <div class="story-name">Luna</div>
+      </div>
+      <div class="story">
+        <div class="story-ring">🐭</div>
+        <div class="story-name">Bolinha</div>
+      </div>
+      <div class="story">
+        <div class="story-ring">🦜</div>
+        <div class="story-name">Loró</div>
+      </div>
+      <div class="story">
+        <div class="story-ring match-ring">🐩</div>
+        <div class="story-name">Match!</div>
+      </div>
+      <div class="story">
+        <div class="story-ring">🐰</div>
+        <div class="story-name">Fofinha</div>
+      </div>
+    </div>
+
+    <!-- Alert banner -->
+    <div class="alert-banner">
+      <div class="alert-icon">🚨</div>
+      <div class="alert-text">
+        <div class="alert-title">Animal em risco próximo!</div>
+        <div class="alert-sub">Cachorro encontrado — 280m de você</div>
+      </div>
+      <div class="alert-action">Ver</div>
+    </div>
+
+    <div class="feed">
+      <!-- Card 1 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="avatar">M</div>
+          <div class="card-user">
+            <div class="card-user-name">Marina S.</div>
+            <div class="card-user-sub">há 12 min • Blumenau, SC</div>
+          </div>
+          <span class="badge badge-found">Encontrado</span>
         </div>
-        <dl class="hero-stats" aria-label="Indicadores do RadarPet">
+        <div class="card-img">🐕</div>
+        <div class="card-body">
+          <div class="card-title">Cãozinho encontrado na Rua XV</div>
+          <div class="card-desc">Macho, porte médio, cor caramelo. Parece bem de saúde. Alguém reconhece?</div>
+          <div class="card-location">📍 Próximo a você (380m)</div>
+        </div>
+        <div class="card-actions">
+          <button class="action-btn">🐾 34</button>
+          <button class="action-btn">💬 Comentar</button>
+          <button class="action-btn primary">📤 Compartilhar</button>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="avatar" style="background:#DBEAFE;color:#1E3A8A;font-size:12px;">ONG</div>
+          <div class="card-user">
+            <div class="card-user-name">Patinhas Felizes</div>
+            <div class="card-user-sub">há 1h • Indaial, SC</div>
+          </div>
+          <span class="badge badge-adopt">Adoção</span>
+        </div>
+        <div class="card-img" style="background: linear-gradient(135deg, #D1FAE5, #6EE7B7);">🐱</div>
+        <div class="card-body">
+          <div class="card-title">Luna busca um lar 💙</div>
+          <div class="card-desc">Gatinha de 3 meses, vacinada, castrada e super carinhosa.</div>
+        </div>
+        <div class="card-actions">
+          <button class="action-btn">🐾 87</button>
+          <button class="action-btn primary">🏠 Quero adotar</button>
+        </div>
+      </div>
+
+      <!-- Card 3 — rato branco! -->
+      <div class="card">
+        <div class="card-header">
+          <div class="avatar" style="background:#F3E8FF;color:#7E22CE;">A</div>
+          <div class="card-user">
+            <div class="card-user-name">Ana Paula</div>
+            <div class="card-user-sub">há 2h • Gaspar, SC</div>
+          </div>
+          <span class="badge" style="background:#F3E8FF;color:#7E22CE;">Dia a dia</span>
+        </div>
+        <div class="card-img" style="background: linear-gradient(135deg, #EDE9FE, #DDD6FE);">🐭</div>
+        <div class="card-body">
+          <div class="card-title">Hoje o Nevinho completou 1 ano! 🎉</div>
+          <div class="card-desc">Meu ratinho branco favorito merece todo o amor do mundo. Feliz aniversário, filho! 🤍</div>
+        </div>
+        <div class="card-actions">
+          <button class="action-btn">🐾 112</button>
+          <button class="action-btn">💬 23</button>
+          <button class="action-btn primary">📤 Compartilhar</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== MAPA ===== -->
+  <div class="screen screen-map" id="screen-mapa">
+    <div class="filter-row">
+      <div class="chip on">Todos</div>
+      <div class="chip">Encontrados</div>
+      <div class="chip">Perdidos</div>
+      <div class="chip">Alertas</div>
+      <div class="chip">ONGs</div>
+    </div>
+    <div class="big-map">
+      <svg width="100%" height="100%" viewBox="0 0 316 200">
+        <rect width="316" height="200" fill="#E8F5E9"/>
+        <!-- Roads -->
+        <rect x="0" y="88" width="316" height="14" fill="#CFD8DC" opacity="0.7"/>
+        <rect x="110" y="0" width="14" height="200" fill="#CFD8DC" opacity="0.7"/>
+        <rect x="0" y="148" width="316" height="10" fill="#CFD8DC" opacity="0.5"/>
+        <rect x="60" y="0" width="8" height="200" fill="#CFD8DC" opacity="0.4"/>
+        <rect x="210" y="0" width="8" height="200" fill="#CFD8DC" opacity="0.4"/>
+        <!-- Tree blocks -->
+        <rect x="20" y="20" width="30" height="30" rx="6" fill="#A5D6A7" opacity="0.5"/>
+        <rect x="160" y="110" width="40" height="28" rx="6" fill="#A5D6A7" opacity="0.5"/>
+        <!-- Pins -->
+        <!-- Found dog -->
+        <ellipse cx="80" cy="66" rx="14" ry="14" fill="white" opacity="0.92"/>
+        <text x="80" y="70" text-anchor="middle" font-size="16">🐕</text>
+        <circle cx="80" cy="66" r="16" fill="none" stroke="#16A34A" stroke-width="2"/>
+        <!-- Lost cat -->
+        <ellipse cx="185" cy="115" rx="14" ry="14" fill="white" opacity="0.92"/>
+        <text x="185" y="119" text-anchor="middle" font-size="16">🐱</text>
+        <circle cx="185" cy="115" r="16" fill="none" stroke="#DC2626" stroke-width="2"/>
+        <!-- Alert -->
+        <ellipse cx="250" cy="52" rx="14" ry="14" fill="white" opacity="0.92"/>
+        <text x="250" y="57" text-anchor="middle" font-size="15">⚠️</text>
+        <!-- ONG -->
+        <ellipse cx="145" cy="162" rx="14" ry="14" fill="white" opacity="0.92"/>
+        <text x="145" y="167" text-anchor="middle" font-size="15">❤️</text>
+        <!-- Mouse -->
+        <ellipse cx="55" cy="150" rx="13" ry="13" fill="white" opacity="0.92"/>
+        <text x="55" y="154" text-anchor="middle" font-size="14">🐭</text>
+        <!-- Me -->
+        <circle cx="130" cy="95" r="9" fill="#FF7A2F" stroke="white" stroke-width="2.5"/>
+        <text x="130" y="99" text-anchor="middle" font-size="8" fill="white" font-weight="bold">Eu</text>
+        <!-- Pulse ring -->
+        <circle cx="130" cy="95" r="18" fill="none" stroke="#FF7A2F" stroke-width="1.5" opacity="0.3"/>
+      </svg>
+    </div>
+    <div class="section-label">Próximos de você</div>
+    <div style="padding: 0 12px; display: flex; flex-direction: column; gap: 6px;">
+      <div class="lf-card">
+        <div class="lf-pet-img">🐕</div>
+        <div class="lf-info">
+          <div class="lf-name">Cão encontrado — Rua XV</div>
+          <div class="lf-detail">280m de você • há 12 min</div>
+        </div>
+        <span class="badge badge-found">280m</span>
+      </div>
+      <div class="lf-card">
+        <div class="lf-pet-img">⚠️</div>
+        <div class="lf-info">
+          <div class="lf-name">Alerta — animal em risco</div>
+          <div class="lf-detail">1,2km de você • há 34 min</div>
+        </div>
+        <span class="badge badge-alert">1.2km</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ACHADOS & PERDIDOS ===== -->
+  <div class="screen" id="screen-achados">
+    <div style="padding: 10px 12px 4px;">
+      <div class="filter-row" style="padding: 0; gap: 6px;">
+        <div class="chip on">Perdidos</div>
+        <div class="chip">Encontrados</div>
+        <div class="chip">Reunidos ✅</div>
+      </div>
+    </div>
+    <div class="section-label">Casos em aberto</div>
+    <div class="lf-list">
+      <div class="lf-card">
+        <div class="lf-pet-img">🐕</div>
+        <div class="lf-info">
+          <div class="lf-name">Rex — Golden Retriever</div>
+          <div class="lf-detail">Sumiu em 24/04 • Bairro da Velha, Blumenau</div>
+          <div class="lf-status status-lost">● Desaparecido há 3 dias</div>
+        </div>
+      </div>
+      <div class="lf-card">
+        <div class="lf-pet-img">🐱</div>
+        <div class="lf-info">
+          <div class="lf-name">Mimi — Siamês</div>
+          <div class="lf-detail">Sumiu em 20/04 • Garcia, Blumenau</div>
+          <div class="lf-status status-lost">● Desaparecida há 7 dias</div>
+        </div>
+      </div>
+      <div class="lf-card">
+        <div class="lf-pet-img">🐭</div>
+        <div class="lf-info">
+          <div class="lf-name">Nevinho — Rato Branco</div>
+          <div class="lf-detail">Sumiu em 27/04 • Itoupava, Blumenau</div>
+          <div class="lf-status status-lost">● Desaparecido há 1 dia</div>
+        </div>
+      </div>
+      <div class="lf-card" style="opacity:0.65;">
+        <div class="lf-pet-img" style="background:#D1FAE5;">🐶</div>
+        <div class="lf-info">
+          <div class="lf-name">Pipoca — SRD</div>
+          <div class="lf-detail">Sumiu em 10/04 • Velha Grande</div>
+          <div class="lf-status status-found">✅ Reencontrada!</div>
+        </div>
+      </div>
+    </div>
+    <div style="padding: 4px 12px 70px; text-align: center;">
+      <button style="background:#FF7A2F;color:white;border:none;border-radius:22px;padding:12px 28px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 14px rgba(255,122,47,0.3);">+ Reportar pet perdido</button>
+    </div>
+  </div>
+
+  <!-- ===== PETMATCH ===== -->
+  <div class="screen" id="screen-match">
+    <div style="padding: 10px 12px 4px;">
+      <div style="background: linear-gradient(135deg, #FCE7F3, #FDF2F8); border-radius: 14px; padding: 12px 13px; border: 1px solid #FBCFE8;">
+        <div style="font-size: 13px; font-weight: 800; color: #9D174D;">💕 PetMatch</div>
+        <div style="font-size: 11px; color: #F472B6; font-weight: 600; margin-top: 2px;">Conecte pets da mesma raça para acasalamento responsável</div>
+      </div>
+    </div>
+    <div class="filter-row">
+      <div class="chip on">Todos</div>
+      <div class="chip">Golden</div>
+      <div class="chip">Labrador</div>
+      <div class="chip">Poodle</div>
+      <div class="chip">SRD</div>
+    </div>
+    <div class="section-label">Pets disponíveis perto de você</div>
+    <div class="match-list">
+      <div class="match-card">
+        <div class="match-header">
+          <div class="match-img">🐕</div>
+          <div class="match-info">
+            <div class="match-name">Thor</div>
+            <div class="match-breed">Golden Retriever • Macho</div>
+            <div class="match-detail">2 anos • 3,2km de você • Blumenau</div>
+          </div>
+          <button class="match-btn">💕 Match</button>
+        </div>
+        <div class="match-tags">
+          <span class="match-tag">✅ Vacinado</span>
+          <span class="match-tag">📋 Pedigree</span>
+          <span class="match-tag">🏥 Check-up ok</span>
+        </div>
+      </div>
+
+      <div class="match-card">
+        <div class="match-header">
+          <div class="match-img">🐩</div>
+          <div class="match-info">
+            <div class="match-name">Bella</div>
+            <div class="match-breed">Poodle Toy • Fêmea</div>
+            <div class="match-detail">3 anos • 5,1km • Indaial</div>
+          </div>
+          <button class="match-btn">💕 Match</button>
+        </div>
+        <div class="match-tags">
+          <span class="match-tag">✅ Vacinada</span>
+          <span class="match-tag">🏥 Check-up ok</span>
+          <span class="match-tag">🌟 Premiada</span>
+        </div>
+      </div>
+
+      <div class="match-card">
+        <div class="match-header">
+          <div class="match-img">🐈</div>
+          <div class="match-info">
+            <div class="match-name">Simba</div>
+            <div class="match-breed">Persa • Macho</div>
+            <div class="match-detail">4 anos • 7km • Gaspar</div>
+          </div>
+          <button class="match-btn">💕 Match</button>
+        </div>
+        <div class="match-tags">
+          <span class="match-tag">✅ Vacinado</span>
+          <span class="match-tag">📋 Pedigree</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ONGs ===== -->
+  <div class="screen" id="screen-ongs">
+    <div class="section-label">ONGs parceiras</div>
+    <div class="ong-list">
+      <div class="ong-card">
+        <div class="ong-header">
+          <div class="ong-avatar">🏠</div>
           <div>
-            <dt>128</dt>
-            <dd>casos mapeados</dd>
+            <div class="ong-name">Patinhas Felizes</div>
+            <div class="ong-city">Indaial, SC</div>
           </div>
+          <button class="ong-btn following">Seguindo</button>
+        </div>
+        <div class="ong-stats">
+          <div class="ong-stat"><strong>142</strong>adotados</div>
+          <div class="ong-stat"><strong>38</strong>em adoção</div>
+          <div class="ong-stat"><strong>4.9 ★</strong>avaliação</div>
+        </div>
+      </div>
+      <div class="ong-card">
+        <div class="ong-header">
+          <div class="ong-avatar" style="background:#FCE7F3;">🐾</div>
           <div>
-            <dt>42</dt>
-            <dd>voluntários por perto</dd>
+            <div class="ong-name">Amigos de Pata</div>
+            <div class="ong-city">Blumenau, SC</div>
           </div>
+          <button class="ong-btn">Seguir</button>
+        </div>
+        <div class="ong-stats">
+          <div class="ong-stat"><strong>89</strong>adotados</div>
+          <div class="ong-stat"><strong>21</strong>em adoção</div>
+          <div class="ong-stat"><strong>4.7 ★</strong>avaliação</div>
+        </div>
+      </div>
+      <div class="ong-card">
+        <div class="ong-header">
+          <div class="ong-avatar" style="background:#DCFCE7;">🏥</div>
           <div>
-            <dt>18min</dt>
-            <dd>tempo médio de resposta</dd>
+            <div class="ong-name">Vet Solidário</div>
+            <div class="ong-city">Blumenau, SC</div>
           </div>
-        </dl>
-      </div>
-
-      <div class="hero-visual" aria-label="Voluntário registrando um animal no RadarPet">
-        <img src="assets/radarpet-hero.jpg" alt="Voluntário usando celular para registrar um cachorro encontrado na rua" />
-        <div class="floating-alert">
-          <strong>Alerta próximo</strong>
-          <span>Cachorro perdido a 850 m</span>
+          <button class="ong-btn">Seguir</button>
+        </div>
+        <div class="ong-stats">
+          <div class="ong-stat"><strong>Clínica</strong>parceira</div>
+          <div class="ong-stat"><strong>-50%</strong>resgatados</div>
+          <div class="ong-stat"><strong>5.0 ★</strong>avaliação</div>
         </div>
       </div>
-    </section>
-  </header>
-
-  <main>
-    <section id="radar" class="section radar-section">
-      <div class="section-heading">
-        <span class="eyebrow">Mapa vivo</span>
-        <h2>Do alerta à ajuda organizada</h2>
-        <p>
-          O RadarPet transforma uma denúncia isolada em um fluxo claro para quem pode
-          acolher, transportar, doar, divulgar ou resgatar.
-        </p>
-      </div>
-
-      <div class="radar-grid">
-        <div class="radar-panel" aria-label="Simulação de radar de casos">
-          <div class="radar-map">
-            <span class="pulse one"></span>
-            <span class="pulse two"></span>
-            <span class="pulse three"></span>
-            <span class="pin urgent">SOS</span>
-            <span class="pin foster">LT</span>
-            <span class="pin food">Ração</span>
+      <div class="ong-card">
+        <div class="ong-header">
+          <div class="ong-avatar" style="background:#FEF9C3;">🛒</div>
+          <div>
+            <div class="ong-name">PetShop Amigo</div>
+            <div class="ong-city">Blumenau, SC</div>
           </div>
+          <button class="ong-btn">Seguir</button>
         </div>
-
-        <div class="workflow">
-          <article>
-            <span>01</span>
-            <h3>Localize</h3>
-            <p>Informe rua, bairro, cidade e ponto de referência para reduzir ruído no resgate.</p>
-          </article>
-          <article>
-            <span>02</span>
-            <h3>Classifique</h3>
-            <p>Marque urgência, espécie, condição e tipo de ajuda necessária.</p>
-          </article>
-          <article>
-            <span>03</span>
-            <h3>Conecte</h3>
-            <p>O caso aparece para pessoas e instituições com capacidade de ação naquela região.</p>
-          </article>
+        <div class="ong-stats">
+          <div class="ong-stat"><strong>Parceiro</strong>comercial</div>
+          <div class="ong-stat"><strong>10%</strong>desconto</div>
+          <div class="ong-stat"><strong>4.8 ★</strong>avaliação</div>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
 
-    <section id="casos" class="section cases-section">
-      <div class="section-heading compact">
-        <span class="eyebrow">Casos ativos</span>
-        <h2>Priorize pelo que precisa acontecer agora</h2>
-      </div>
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="bnav-item active" id="bnav-feed" onclick="showScreen('feed')"><span class="bnav-icon">🏠</span>Início</div>
+    <div class="bnav-item" id="bnav-mapa" onclick="showScreen('mapa')"><span class="bnav-icon">🗺️</span>Mapa</div>
+    <div class="bnav-item fab-wrap" onclick="showScreen('feed')">
+      <div class="bnav-center">📷</div>
+    </div>
+    <div class="bnav-item" id="bnav-match" onclick="showScreen('match')"><span class="bnav-icon">💕</span>Match</div>
+    <div class="bnav-item" id="bnav-ongs" onclick="showScreen('ongs')"><span class="bnav-icon">❤️</span>ONGs</div>
+  </div>
+</div>
 
-      <div class="case-board">
-        <article class="case-card urgent-card">
-          <div class="case-top">
-            <span class="badge danger">Urgente</span>
-            <small>Blumenau - SC</small>
-          </div>
-          <h3>Cachorro ferido no centro</h3>
-          <p>Precisa de transporte, avaliação veterinária e alguém para acompanhar o atendimento.</p>
-          <div class="case-actions">
-            <span>3 voluntários olhando</span>
-            <a href="#registrar">Ajudar</a>
-          </div>
-        </article>
+<script>
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.bnav-item').forEach(b => b.classList.remove('active'));
 
-        <article class="case-card">
-          <div class="case-top">
-            <span class="badge warm">Lar temporário</span>
-            <small>Itajaí - SC</small>
-          </div>
-          <h3>Filhotes encontrados em caixa</h3>
-          <p>Estão seguros por poucas horas. Precisam de acolhimento e ração úmida.</p>
-          <div class="case-actions">
-            <span>8 compartilhamentos</span>
-            <a href="#registrar">Acolher</a>
-          </div>
-        </article>
+  document.getElementById('screen-' + name).classList.add('active');
 
-        <article class="case-card">
-          <div class="case-top">
-            <span class="badge good">Em adoção</span>
-            <small>Joinville - SC</small>
-          </div>
-          <h3>Mel, cachorra adulta dócil</h3>
-          <p>Resgatada, vacinada e pronta para uma adoção responsável com entrevista.</p>
-          <div class="case-actions">
-            <span>Perfil verificado</span>
-            <a href="#registrar">Conhecer</a>
-          </div>
-        </article>
-      </div>
-    </section>
+  const tabMap = { feed: 0, mapa: 1, achados: 2, match: 3, ongs: 4 };
+  const tabs = document.querySelectorAll('.tab');
+  if (tabMap[name] !== undefined) tabs[tabMap[name]].classList.add('active');
 
-    <section id="pedigree" class="section pedigree-section">
-      <div class="section-heading">
-        <span class="eyebrow">Match responsável</span>
-        <h2>Pedigree com verificação e critérios claros</h2>
-        <p>
-          Para tutores que buscam conexões por raça, documentação, saúde, cidade e objetivo,
-          com foco em responsabilidade e transparência.
-        </p>
-      </div>
-
-      <div class="match-layout">
-        <aside class="filters" aria-label="Filtros de match pedigree">
-          <h3>Filtros</h3>
-          <label>
-            Espécie
-            <select>
-              <option>Cachorros</option>
-              <option>Gatos</option>
-              <option>Todos</option>
-            </select>
-          </label>
-          <label>
-            Raça
-            <select>
-              <option>Golden Retriever</option>
-              <option>Spitz Alemão</option>
-              <option>Maine Coon</option>
-              <option>Persa</option>
-            </select>
-          </label>
-          <label>
-            Distância
-            <select>
-              <option>Até 25 km</option>
-              <option>Até 50 km</option>
-              <option>Até 100 km</option>
-            </select>
-          </label>
-          <button type="button">Buscar matches</button>
-        </aside>
-
-        <div class="match-list">
-          <article class="match-card">
-            <div class="match-avatar">GR</div>
-            <div>
-              <div class="match-meta">
-                <span>96% compatível</span>
-                <small>CBKC conferido</small>
-              </div>
-              <h3>Thor da Serra</h3>
-              <p>Golden Retriever, vacinas em dia, exames recentes e linhagem documentada.</p>
-            </div>
-          </article>
-          <article class="match-card">
-            <div class="match-avatar teal">SP</div>
-            <div>
-              <div class="match-meta">
-                <span>89% compatível</span>
-                <small>Microchip</small>
-              </div>
-              <h3>Luna Snow</h3>
-              <p>Spitz Alemão com histórico de saúde, tutor verificado e critérios de match claros.</p>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="registrar" class="section register-section">
-      <div class="section-heading compact">
-        <span class="eyebrow">Cadastro rápido</span>
-        <h2>Envie um novo registro</h2>
-      </div>
-
-      <div class="forms-grid">
-        <form class="form-card">
-          <h3>Ocorrência animal</h3>
-          <label>
-            Identificação
-            <input type="text" placeholder="Ex: cachorro caramelo ferido" />
-          </label>
-          <label>
-            Localização
-            <input type="text" placeholder="Rua, bairro e cidade" />
-          </label>
-          <label>
-            Situação
-            <select>
-              <option>Animal ferido</option>
-              <option>Animal abandonado</option>
-              <option>Precisa de lar temporário</option>
-              <option>Precisa de ração</option>
-              <option>Disponível para adoção</option>
-            </select>
-          </label>
-          <label>
-            Descrição
-            <textarea placeholder="Conte o que aconteceu e qual ajuda é necessária"></textarea>
-          </label>
-          <button type="button">Enviar ocorrência</button>
-        </form>
-
-        <form class="form-card accent-form">
-          <h3>Cadastro pedigree</h3>
-          <label>
-            Nome do animal
-            <input type="text" placeholder="Ex: Mel do Vale" />
-          </label>
-          <label>
-            Raça e registro
-            <input type="text" placeholder="Ex: Golden Retriever, CBKC 000000" />
-          </label>
-          <label>
-            Objetivo
-            <select>
-              <option>Rede de tutores pedigree</option>
-              <option>Companhia da mesma raça</option>
-              <option>Reprodução responsável</option>
-            </select>
-          </label>
-          <label>
-            Saúde e linhagem
-            <textarea placeholder="Informe exames, vacinas, linhagem e critérios importantes"></textarea>
-          </label>
-          <button type="button">Enviar para análise</button>
-        </form>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <strong>RadarPet</strong>
-    <span>Conectando pessoas para proteger animais perto de você.</span>
-  </footer>
+  const bnav = document.getElementById('bnav-' + name);
+  if (bnav) bnav.classList.add('active');
+}
+</script>
 </body>
 </html>
