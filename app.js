@@ -5,6 +5,7 @@ const FOLLOWS_KEY = "radarpet_follows";
 // Netlify Functions escondem a conexão com o Atlas do lado do servidor.
 const PETS_API_LIST_URL = "/.netlify/functions/list-pets";
 const PETS_API_CREATE_URL = "/.netlify/functions/create-pet";
+const PETS_REFRESH_INTERVAL_MS = 15000;
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/daw3up5vu/image/upload";
 const CLOUDINARY_PRESET = "radarpet";
 const PLACEHOLDER_IMAGE =
@@ -37,6 +38,10 @@ const state = {
     status: "idle",
     photoUrl: "",
     previewUrl: "",
+  },
+  sync: {
+    intervalId: null,
+    isLoading: false,
   },
 };
 
@@ -135,6 +140,70 @@ async function createPetInApi(pet) {
   }
 
   return normalizePet(data.pet);
+}
+
+function getPetsSignature(pets) {
+  return JSON.stringify(
+    pets.map((pet) => [
+      pet.id,
+      pet.nome,
+      pet.especie,
+      pet.raca,
+      pet.sexo,
+      pet.cor,
+      pet.cidade,
+      pet.telefone,
+      pet.status,
+      pet.fotoUrl,
+    ])
+  );
+}
+
+async function syncPets(options = {}) {
+  const {
+    announceUpdates = false,
+    announceOfflineFallback = false,
+    announceLoadError = false,
+  } = options;
+
+  if (state.sync.isLoading) {
+    return;
+  }
+
+  state.sync.isLoading = true;
+
+  try {
+    const previousSignature = getPetsSignature(state.pets);
+    const petsFromApi = await fetchPetsFromApi();
+    const nextSignature = getPetsSignature(petsFromApi);
+    const hadPetsBefore = state.pets.length > 0;
+
+    state.pets = petsFromApi;
+    savePets(state.pets);
+
+    if (nextSignature !== previousSignature) {
+      renderAll();
+      if (announceUpdates && hadPetsBefore) {
+        showToast("A lista de pets foi atualizada.");
+      }
+    }
+  } catch (error) {
+    console.error(error);
+
+    if (!state.pets.length) {
+      state.pets = loadPets();
+      renderAll();
+      if (announceOfflineFallback && state.pets.length) {
+        showToast("Modo offline: exibindo pets salvos neste navegador.");
+      }
+    }
+
+    if (announceLoadError && !state.pets.length) {
+      showToast("NÃ£o foi possÃ­vel carregar os pets agora.");
+    }
+  } finally {
+    state.sync.isLoading = false;
+  }
 }
 
 async function readJson(path, fallback) {
@@ -637,6 +706,24 @@ function setupInteractions() {
   });
 }
 
+function setupAutoRefresh() {
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+      syncPets({ announceUpdates: true });
+    }
+  });
+
+  window.addEventListener("online", () => {
+    syncPets({ announceUpdates: true });
+  });
+
+  state.sync.intervalId = window.setInterval(() => {
+    if (!document.hidden) {
+      syncPets({ announceUpdates: true });
+    }
+  }, PETS_REFRESH_INTERVAL_MS);
+}
+
 async function boot() {
   state.ongs = await readJson("data/ongs.json", []);
   state.followed = new Set(readArray(FOLLOWS_KEY));
@@ -644,9 +731,13 @@ async function boot() {
   setupPhotoUpload();
   setupReportForm();
   setupInteractions();
+  setupAutoRefresh();
 
   try {
-    state.pets = await fetchPetsFromApi();
+    await syncPets({
+      announceOfflineFallback: true,
+      announceLoadError: true,
+    });
     // Mantemos um espelho local apenas para fallback offline.
     savePets(state.pets);
   } catch (error) {
