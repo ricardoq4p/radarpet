@@ -1,4 +1,4 @@
-const CACHE_NAME = "radarpet-app-v6";
+const CACHE_NAME = "radarpet-app-v7";
 const APP_SHELL = [
   "./",
   "index.html",

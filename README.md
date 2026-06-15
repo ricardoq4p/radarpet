@@ -1,1 +1,37 @@
-# radarpet
+# RadarPet
+
+MVP de cadastro e localização de pets com upload de imagens no Cloudinary, frontend estático e persistência em MongoDB Atlas via Netlify Functions.
+
+## Variáveis de ambiente
+
+Configurar no Netlify:
+
+- `MONGODB_URI`
+- `MONGODB_DB`
+
+## Como rodar localmente
+
+1. Instale as dependências:
+   - `npm install`
+2. Faça login no Netlify CLI, se necessário:
+   - `npx netlify login`
+3. Inicie o ambiente local com Functions:
+   - `npx netlify dev`
+4. Abra o endereço exibido pelo Netlify Dev no navegador.
+5. Cadastre um pet com foto para validar o fluxo completo.
+
+## Fluxo de persistência
+
+1. O usuário seleciona a foto no formulário.
+2. O frontend envia a imagem para o Cloudinary.
+3. O Cloudinary devolve a `fotoUrl`.
+4. O frontend envia os dados do pet para a Function `create-pet`.
+5. A Function grava o documento na collection `pets` do MongoDB Atlas.
+6. Ao abrir o app, a Function `list-pets` busca os registros e alimenta a listagem.
+
+O `localStorage` permanece apenas como fallback offline do navegador.
+
+## Funções serverless
+
+- `/.netlify/functions/list-pets`
+- `/.netlify/functions/create-pet`

@@ -2,6 +2,9 @@
 
 const PETS_KEY = "radarpet_pets";
 const FOLLOWS_KEY = "radarpet_follows";
+// Netlify Functions escondem a conexão com o Atlas do lado do servidor.
+const PETS_API_LIST_URL = "/.netlify/functions/list-pets";
+const PETS_API_CREATE_URL = "/.netlify/functions/create-pet";
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/daw3up5vu/image/upload";
 const CLOUDINARY_PRESET = "radarpet";
 const PLACEHOLDER_IMAGE =
@@ -78,6 +81,60 @@ function loadPets() {
 
 function savePets(pets) {
   writeArray(PETS_KEY, pets);
+}
+
+function normalizePet(record) {
+  return {
+    id: String(record.id || record._id || `pet-${Date.now()}`),
+    nome: String(record.nome || "").trim(),
+    especie: String(record.especie || "").trim(),
+    raca: String(record.raca || "").trim(),
+    sexo: String(record.sexo || "").trim(),
+    cor: String(record.cor || "").trim(),
+    cidade: String(record.cidade || "").trim(),
+    telefone: String(record.telefone || "").trim(),
+    status: String(record.status || "").trim(),
+    fotoUrl: String(record.fotoUrl || "").trim(),
+  };
+}
+
+async function fetchPetsFromApi() {
+  // Ao abrir o app, buscamos a lista oficial no MongoDB Atlas.
+  const response = await fetch(PETS_API_LIST_URL, {
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Falha ao carregar pets.");
+  }
+
+  const data = await response.json();
+  if (!Array.isArray(data.pets)) {
+    throw new Error("Resposta inválida ao listar pets.");
+  }
+
+  return data.pets.map(normalizePet);
+}
+
+async function createPetInApi(pet) {
+  // O frontend envia apenas dados já validados e a fotoUrl retornada pelo Cloudinary.
+  const response = await fetch(PETS_API_CREATE_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(pet),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || !data.pet) {
+    throw new Error(data.error || "Erro ao salvar cadastro.");
+  }
+
+  return normalizePet(data.pet);
 }
 
 async function readJson(path, fallback) {
@@ -425,7 +482,7 @@ function setupReportForm() {
   const form = document.getElementById("report-form");
   if (!form) return;
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const consent = document.getElementById("legal-consent");
 
@@ -451,8 +508,11 @@ function setupReportForm() {
       return;
     }
 
+    setSubmitState(true, "Salvando pet...");
+
     try {
-      state.pets = [pet, ...loadPets()];
+      const savedPet = await createPetInApi(pet);
+      state.pets = [savedPet, ...state.pets.filter((item) => item.id !== savedPet.id)];
       savePets(state.pets);
       form.reset();
       resetUploadState();
@@ -462,8 +522,12 @@ function setupReportForm() {
       renderAll();
       showScreen("feed");
       showToast("Pet cadastrado com sucesso.");
-    } catch {
+    } catch (error) {
+      console.error(error);
       showToast("Erro ao salvar cadastro.");
+      setUploadFeedback("NÃ£o foi possÃ­vel salvar no servidor agora.", "error");
+    } finally {
+      setSubmitState(false, "Salvar pet");
     }
   });
 }
@@ -574,13 +638,27 @@ function setupInteractions() {
 }
 
 async function boot() {
-  state.pets = loadPets();
   state.ongs = await readJson("data/ongs.json", []);
   state.followed = new Set(readArray(FOLLOWS_KEY));
 
   setupPhotoUpload();
   setupReportForm();
   setupInteractions();
+
+  try {
+    state.pets = await fetchPetsFromApi();
+    // Mantemos um espelho local apenas para fallback offline.
+    savePets(state.pets);
+  } catch (error) {
+    console.error(error);
+    state.pets = loadPets();
+    if (state.pets.length) {
+      showToast("Modo offline: exibindo pets salvos neste navegador.");
+    } else {
+      showToast("NÃ£o foi possÃ­vel carregar os pets agora.");
+    }
+  }
+
   renderAll();
 
   if ("serviceWorker" in navigator) {

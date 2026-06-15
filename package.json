@@ -1,0 +1,13 @@
+{
+  "name": "radarpet",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MVP do RadarPet com frontend estático e Netlify Functions integradas ao MongoDB Atlas.",
+  "scripts": {
+    "dev": "netlify dev",
+    "start": "netlify dev"
+  },
+  "dependencies": {
+    "mongodb": "^6.18.0"
+  }
+}
