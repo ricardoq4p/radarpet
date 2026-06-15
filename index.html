@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="assets/icon-192.svg">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
 <div class="phone">
@@ -27,9 +27,9 @@
     </div>
     <div class="header-icons">
       <!-- Bell -->
-      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <button class="icon-btn" type="button" data-action="notifications" aria-label="Notificações"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
       <!-- Chat -->
-      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <button class="icon-btn" type="button" data-action="messages" aria-label="Mensagens"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
     </div>
   </div>
 
@@ -37,7 +37,7 @@
   <div class="search-wrap">
     <div class="search-bar">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF9A5C" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      Buscar pets, ONGs, raças…
+      <input id="app-search" type="search" placeholder="Buscar pets, ONGs, raças..." aria-label="Buscar pets, ONGs e raças">
     </div>
   </div>
 
@@ -54,40 +54,40 @@
   <div class="screen active" id="screen-feed">
     <!-- Stories -->
     <div class="story-row">
-      <div class="story">
+      <div class="story" data-action="story" data-story="Rex">
         <div class="story-ring">🐕</div>
         <div class="story-name">Rex</div>
       </div>
-      <div class="story">
+      <div class="story" data-action="story" data-story="Luna">
         <div class="story-ring">🐱</div>
         <div class="story-name">Luna</div>
       </div>
-      <div class="story">
+      <div class="story" data-action="story" data-story="Bolinha">
         <div class="story-ring">🐭</div>
         <div class="story-name">Bolinha</div>
       </div>
-      <div class="story">
+      <div class="story" data-action="story" data-story="Loró">
         <div class="story-ring">🦜</div>
         <div class="story-name">Loró</div>
       </div>
-      <div class="story">
+      <div class="story" data-action="story" data-story="PetMatch">
         <div class="story-ring match-ring">🐩</div>
         <div class="story-name">Match!</div>
       </div>
-      <div class="story">
+      <div class="story" data-action="story" data-story="Fofinha">
         <div class="story-ring">🐰</div>
         <div class="story-name">Fofinha</div>
       </div>
     </div>
 
     <!-- Alert banner -->
-    <div class="alert-banner">
+    <div class="alert-banner" data-action="show-map-alert">
       <div class="alert-icon">🚨</div>
       <div class="alert-text">
         <div class="alert-title">Animal em risco próximo!</div>
         <div class="alert-sub">Cachorro encontrado — 280m de você</div>
       </div>
-      <div class="alert-action">Ver</div>
+      <button class="alert-action" type="button">Ver</button>
     </div>
 
     <div class="feed" id="feed-list"></div>
@@ -96,13 +96,13 @@
   <!-- ===== MAPA ===== -->
   <div class="screen screen-map" id="screen-mapa">
     <div class="filter-row">
-      <div class="chip on">Todos</div>
-      <div class="chip">Encontrados</div>
-      <div class="chip">Perdidos</div>
-      <div class="chip">Alertas</div>
-      <div class="chip">ONGs</div>
+      <button class="chip on" type="button" data-map-filter="all">Todos</button>
+      <button class="chip" type="button" data-map-filter="found">Encontrados</button>
+      <button class="chip" type="button" data-map-filter="lost">Perdidos</button>
+      <button class="chip" type="button" data-map-filter="alert">Alertas</button>
+      <button class="chip" type="button" data-map-filter="ong">ONGs</button>
     </div>
-    <div class="big-map">
+    <div class="big-map" id="radar-map" data-action="map">
       <svg width="100%" height="100%" viewBox="0 0 316 200">
         <rect width="316" height="200" fill="#E8F5E9"/>
         <!-- Roads -->
@@ -140,33 +140,16 @@
       </svg>
     </div>
     <div class="section-label">Próximos de você</div>
-    <div style="padding: 0 12px; display: flex; flex-direction: column; gap: 6px;">
-      <div class="lf-card">
-        <div class="lf-pet-img">🐕</div>
-        <div class="lf-info">
-          <div class="lf-name">Cão encontrado — Rua XV</div>
-          <div class="lf-detail">280m de você • há 12 min</div>
-        </div>
-        <span class="badge badge-found">280m</span>
-      </div>
-      <div class="lf-card">
-        <div class="lf-pet-img">⚠️</div>
-        <div class="lf-info">
-          <div class="lf-name">Alerta — animal em risco</div>
-          <div class="lf-detail">1,2km de você • há 34 min</div>
-        </div>
-        <span class="badge badge-alert">1.2km</span>
-      </div>
-    </div>
+    <div class="map-nearby-list" id="map-nearby-list"></div>
   </div>
 
   <!-- ===== ACHADOS & PERDIDOS ===== -->
   <div class="screen" id="screen-achados">
     <div style="padding: 10px 12px 4px;">
       <div class="filter-row" style="padding: 0; gap: 6px;">
-        <div class="chip on">Perdidos</div>
-        <div class="chip">Encontrados</div>
-        <div class="chip">Reunidos ✅</div>
+        <button class="chip on" type="button" data-lost-filter="all">Todos</button>
+        <button class="chip" type="button" data-lost-filter="lost">Perdidos</button>
+        <button class="chip" type="button" data-lost-filter="found">Encontrados</button>
       </div>
     </div>
     <div class="section-label">Casos em aberto</div>
@@ -185,11 +168,11 @@
       </div>
     </div>
     <div class="filter-row">
-      <div class="chip on">Todos</div>
-      <div class="chip">Golden</div>
-      <div class="chip">Labrador</div>
-      <div class="chip">Poodle</div>
-      <div class="chip">SRD</div>
+      <button class="chip on" type="button" data-match-filter="all">Todos</button>
+      <button class="chip" type="button" data-match-filter="Cachorro">Cachorros</button>
+      <button class="chip" type="button" data-match-filter="Gato">Gatos</button>
+      <button class="chip" type="button" data-match-filter="Coelho">Coelhos</button>
+      <button class="chip" type="button" data-match-filter="Ave">Aves</button>
     </div>
     <div class="section-label">Pets disponíveis perto de você</div>
     <div class="match-list" id="match-list"></div>
@@ -257,6 +240,19 @@
   </form>
 </div>
 <div class="toast" id="toast" role="status"></div>
-<script src="app.js"></script>
+<div class="info-modal-backdrop" id="info-modal" aria-hidden="true">
+  <section class="info-modal" role="dialog" aria-modal="true" aria-labelledby="info-modal-title">
+    <div class="modal-head">
+      <div>
+        <strong id="info-modal-title">RadarPet</strong>
+        <span id="info-modal-subtitle">Detalhes</span>
+      </div>
+      <button type="button" class="modal-close" data-action="close-info" aria-label="Fechar">x</button>
+    </div>
+    <p id="info-modal-body"></p>
+    <button class="modal-submit" type="button" data-action="close-info">Entendi</button>
+  </section>
+</div>
+<script src="app.js?v=4"></script>
 </body>
 </html>
