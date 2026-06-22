@@ -10,6 +10,7 @@ const PETS_REFRESH_INTERVAL_MS = 15000;
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/daw3up5vu/image/upload";
 const CLOUDINARY_PRESET = "radarpet";
 const AUTH_CONFIG = window.RADARPET_AUTH_CONFIG || {};
+const CODESPACES_HOST_SUFFIXES = [".app.github.dev", ".github.dev"];
 const PLACEHOLDER_IMAGE =
   "data:image/svg+xml;charset=UTF-8," +
   encodeURIComponent(`
@@ -144,6 +145,11 @@ function getProviderLabel(providerId) {
   };
 
   return providerLabels[providerId] || "Conta social";
+}
+
+function isCodespacesHost() {
+  const host = String(window.location.hostname || "").toLowerCase();
+  return CODESPACES_HOST_SUFFIXES.some((suffix) => host.endsWith(suffix));
 }
 
 function getCurrentUser() {
@@ -910,6 +916,13 @@ async function signInWithProvider(providerName) {
     if (providerName === "google") {
       provider.setCustomParameters({ prompt: "select_account" });
     }
+
+    if (isCodespacesHost()) {
+      sessionStorage.setItem("radarpet_auth_provider", providerName);
+      await state.auth.firebaseAuth.signInWithRedirect(provider);
+      return;
+    }
+
     await state.auth.firebaseAuth.signInWithPopup(provider);
     state.auth.guestUser = null;
     persistGuestSession(null);
@@ -1095,11 +1108,22 @@ function initFirebaseAuth() {
 
     state.auth.firebaseAuth = window.firebase.auth();
     state.auth.firebaseAuth.setPersistence(window.firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
+    state.auth.firebaseAuth.getRedirectResult().catch((error) => {
+      console.error(error);
+      if (sessionStorage.getItem("radarpet_auth_provider")) {
+        sessionStorage.removeItem("radarpet_auth_provider");
+        showToast(getReadableAuthError(error));
+      }
+    });
     state.auth.firebaseAuth.onAuthStateChanged((user) => {
       state.auth.user = normalizeAuthUser(user);
       if (state.auth.user) {
         state.auth.guestUser = null;
         persistGuestSession(null);
+        if (sessionStorage.getItem("radarpet_auth_provider")) {
+          sessionStorage.removeItem("radarpet_auth_provider");
+          showToast("Login realizado com sucesso.");
+        }
       }
       syncAuthShell();
     });
