@@ -2,7 +2,6 @@
 
 const PETS_KEY = "radarpet_pets";
 const FOLLOWS_KEY = "radarpet_follows";
-const GUEST_SESSION_KEY = "radarpet_guest_session";
 const PETS_API_LIST_URL = "/.netlify/functions/list-pets";
 const PETS_API_CREATE_URL = "/.netlify/functions/create-pet";
 const PETS_API_CONTACT_URL = "/.netlify/functions/get-pet-contact";
@@ -50,7 +49,6 @@ const state = {
     firebaseAuth: null,
     isConfigured: false,
     user: null,
-    guestUser: readGuestSession(),
     enabledProviders: getEnabledProviders(),
   },
 };
@@ -76,41 +74,6 @@ function readArray(key) {
 
 function writeArray(key, values) {
   localStorage.setItem(key, JSON.stringify(values));
-}
-
-function readGuestSession() {
-  try {
-    const value = JSON.parse(localStorage.getItem(GUEST_SESSION_KEY) || "null");
-    if (!value || typeof value !== "object") {
-      return null;
-    }
-
-    return {
-      id: String(value.id || "guest"),
-      name: String(value.name || "Visitante RadarPet"),
-      email: "",
-      avatar: "",
-      provider: "Modo visitante",
-      isGuest: true,
-    };
-  } catch {
-    return null;
-  }
-}
-
-function persistGuestSession(user) {
-  if (!user || !user.isGuest) {
-    localStorage.removeItem(GUEST_SESSION_KEY);
-    return;
-  }
-
-  localStorage.setItem(
-    GUEST_SESSION_KEY,
-    JSON.stringify({
-      id: user.id,
-      name: user.name,
-    })
-  );
 }
 
 function getFirebaseConfig() {
@@ -148,7 +111,7 @@ function getProviderLabel(providerId) {
 }
 
 function getCurrentUser() {
-  return state.auth.user || state.auth.guestUser;
+  return state.auth.user;
 }
 
 function canCreateListings() {
@@ -207,11 +170,9 @@ function renderSessionUI() {
   }
 
   sessionName.textContent = currentUser.name;
-  sessionProvider.textContent = currentUser.isGuest
-    ? "Explorando sem login"
-    : `${currentUser.provider}${currentUser.email ? ` • ${currentUser.email}` : ""}`;
-  sessionLabel.textContent = currentUser.isGuest ? "Modo visitante" : "Sessao conectada";
-  logoutButton.textContent = currentUser.isGuest ? "Encerrar visita" : "Sair";
+  sessionProvider.textContent = `${currentUser.provider}${currentUser.email ? ` • ${currentUser.email}` : ""}`;
+  sessionLabel.textContent = "Sessao conectada";
+  logoutButton.textContent = "Sair";
 
   if (currentUser.avatar) {
     sessionAvatar.innerHTML = `<img src="${escapeHtml(currentUser.avatar)}" alt="Avatar de ${escapeHtml(currentUser.name)}">`;
@@ -403,6 +364,10 @@ function getPetsSignature(pets) {
 }
 
 async function syncPets(options = {}) {
+  if (!state.auth.user) {
+    return;
+  }
+
   const {
     announceUpdates = false,
     announceOfflineFallback = false,
@@ -1031,8 +996,6 @@ async function completeGoogleOAuthRedirect() {
   const credential = window.firebase.auth.GoogleAuthProvider.credential(idToken);
   await state.auth.firebaseAuth.signInWithCredential(credential);
   clearGoogleOAuthState();
-  state.auth.guestUser = null;
-  persistGuestSession(null);
   showToast("Login realizado com sucesso.");
   return true;
 }
@@ -1064,8 +1027,6 @@ async function signInWithProvider(providerName) {
   try {
     provider = providerFactory();
     await state.auth.firebaseAuth.signInWithPopup(provider);
-    state.auth.guestUser = null;
-    persistGuestSession(null);
     showToast("Login realizado com sucesso.");
   } catch (error) {
     console.error(error);
@@ -1088,20 +1049,6 @@ async function signInWithProvider(providerName) {
   }
 }
 
-function continueAsGuest() {
-  state.auth.guestUser = {
-    id: `guest-${Date.now()}`,
-    name: "Visitante RadarPet",
-    email: "",
-    avatar: "",
-    provider: "Modo visitante",
-    isGuest: true,
-  };
-  persistGuestSession(state.auth.guestUser);
-  syncAuthShell();
-  showToast("Voce entrou no modo visitante.");
-}
-
 async function handleLogout() {
   try {
     if (state.auth.firebaseAuth && state.auth.user) {
@@ -1111,8 +1058,6 @@ async function handleLogout() {
     console.error(error);
   } finally {
     state.auth.user = null;
-    state.auth.guestUser = null;
-    persistGuestSession(null);
     closeReportModal();
     syncAuthShell();
     showToast("Sessao encerrada.");
@@ -1128,7 +1073,6 @@ function setupInteractions() {
   });
 
   document.getElementById("logout-button")?.addEventListener("click", handleLogout);
-  document.getElementById("guest-access-button")?.addEventListener("click", continueAsGuest);
 
   document.querySelectorAll("[data-auth-provider]").forEach((button) => {
     button.addEventListener("click", () => signInWithProvider(button.dataset.authProvider));
@@ -1272,14 +1216,25 @@ function initFirebaseAuth() {
     });
     state.auth.firebaseAuth.onAuthStateChanged((user) => {
       state.auth.user = normalizeAuthUser(user);
+
       if (state.auth.user) {
-        state.auth.guestUser = null;
-        persistGuestSession(null);
         if (getPendingAuthProvider()) {
           clearPendingAuthProvider();
           showToast("Login realizado com sucesso.");
         }
+
+        syncPets({
+          announceOfflineFallback: true,
+          announceLoadError: true,
+        }).then(() => {
+          savePets(state.pets);
+          renderAll();
+        });
+      } else {
+        state.pets = [];
+        renderAll();
       }
+
       syncAuthShell();
     });
 
