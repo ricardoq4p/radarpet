@@ -478,7 +478,14 @@ body {
 
 .card-img img,
 .photo-thumb img,
-.upload-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.upload-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  background: #fff8f4;
+  display: block;
+}
 
 .card-body { padding: 10px 13px; }
 .card-title { font-size: 13px; font-weight: 800; color: var(--text-main); margin-bottom: 3px; }
