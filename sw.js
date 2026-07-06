@@ -1,4 +1,4 @@
-const CACHE_NAME = "radarpet-app-v8";
+const CACHE_NAME = "radarpet-app-v9";
 const APP_SHELL = [
   "./",
   "index.html",
@@ -6,6 +6,7 @@ const APP_SHELL = [
   "privacidade.html",
   "style.css",
   "app.js",
+  "auth-config.js",
   "manifest.json",
   "data/pets.json",
   "data/ongs.json",
@@ -21,44 +22,64 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))
-    ).then(() => self.clients.claim())
+    caches.keys()
+      .then((keys) => Promise.all(
+        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+      ))
+      .then(() => self.clients.claim())
   );
 });
 
-self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") return;
-  const request = event.request;
-  const requestUrl = new URL(request.url);
-  const isApiRequest = requestUrl.pathname.startsWith("/.netlify/functions/");
-  const isPageRequest =
-    request.mode === "navigate" ||
-    request.headers.get("accept")?.includes("text/html");
+function cacheSuccessfulResponse(request, response) {
+  if (!response || !response.ok) {
+    return response;
+  }
 
+  const copy = response.clone();
+  caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+  return response;
+}
+
+self.addEventListener("fetch", (event) => {
+  const request = event.request;
+  if (request.method !== "GET") return;
+
+  const requestUrl = new URL(request.url);
+
+  // Cloudinary, Firebase and other third-party resources must keep their
+  // native network/error behavior. Returning app HTML for them breaks images
+  // and authentication scripts with an invalid MIME type.
+  if (requestUrl.origin !== self.location.origin) {
+    return;
+  }
+
+  const isApiRequest = requestUrl.pathname.startsWith("/.netlify/functions/");
   if (isApiRequest) {
     event.respondWith(fetch(request));
     return;
   }
 
+  const isPageRequest =
+    request.mode === "navigate" ||
+    request.headers.get("accept")?.includes("text/html");
+
   if (isPageRequest) {
     event.respondWith(
-      fetch(request).then((response) => {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-        return response;
-      }).catch(() => caches.match(request).then((cached) => cached || caches.match("index.html")))
+      fetch(request)
+        .then((response) => cacheSuccessfulResponse(request, response))
+        .catch(async () => {
+          const cached = await caches.match(request);
+          return cached || caches.match("index.html");
+        })
     );
     return;
   }
 
+  // Network-first prevents a previous deployment from pinning old JS/CSS.
+  // The cache is used only as an offline fallback for same-origin assets.
   event.respondWith(
-    caches.match(request).then((cached) =>
-      cached || fetch(request).then((response) => {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-        return response;
-      }).catch(() => caches.match("index.html"))
-    )
+    fetch(request)
+      .then((response) => cacheSuccessfulResponse(request, response))
+      .catch(() => caches.match(request))
   );
 });

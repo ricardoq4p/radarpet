@@ -10,7 +10,6 @@ const PETS_REFRESH_INTERVAL_MS = 15000;
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/daw3up5vu/image/upload";
 const CLOUDINARY_PRESET = "radarpet";
 const AUTH_CONFIG = window.RADARPET_AUTH_CONFIG || {};
-const CODESPACES_HOST_SUFFIXES = [".app.github.dev", ".github.dev"];
 const PLACEHOLDER_IMAGE =
   "data:image/svg+xml;charset=UTF-8," +
   encodeURIComponent(`
@@ -145,11 +144,6 @@ function getProviderLabel(providerId) {
   };
 
   return providerLabels[providerId] || "Conta social";
-}
-
-function isCodespacesHost() {
-  const host = String(window.location.hostname || "").toLowerCase();
-  return CODESPACES_HOST_SUFFIXES.some((suffix) => host.endsWith(suffix));
 }
 
 function getCurrentUser() {
@@ -915,12 +909,6 @@ async function signInWithProvider(providerName) {
     const provider = providerFactory();
     if (providerName === "google") {
       provider.setCustomParameters({ prompt: "select_account" });
-    }
-
-    if (isCodespacesHost()) {
-      sessionStorage.setItem("radarpet_auth_provider", providerName);
-      await state.auth.firebaseAuth.signInWithRedirect(provider);
-      return;
     }
 
     await state.auth.firebaseAuth.signInWithPopup(provider);
