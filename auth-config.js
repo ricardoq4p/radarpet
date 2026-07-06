@@ -6,6 +6,7 @@ window.RADARPET_AUTH_CONFIG = {
     appId: "1:512204788210:web:965246c77637b05e3e5b6b",
     messagingSenderId: "512204788210",
   },
+  googleClientId: "512204788210-dc5vbmdcoeqmcskrbcaat8n6i7fvj3qr.apps.googleusercontent.com",
   providers: {
     google: true,
     facebook: true,

@@ -10,6 +10,7 @@ const PETS_REFRESH_INTERVAL_MS = 15000;
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/daw3up5vu/image/upload";
 const CLOUDINARY_PRESET = "radarpet";
 const AUTH_CONFIG = window.RADARPET_AUTH_CONFIG || {};
+const GOOGLE_OAUTH_STATE_KEY = "radarpet_google_oauth_state";
 const PLACEHOLDER_IMAGE =
   "data:image/svg+xml;charset=UTF-8," +
   encodeURIComponent(`
@@ -928,14 +929,126 @@ function shouldFallbackToRedirect(error) {
   ].some((fallbackCode) => code.includes(fallbackCode));
 }
 
+function createOAuthRandomValue() {
+  const bytes = new Uint8Array(24);
+  window.crypto.getRandomValues(bytes);
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function saveGoogleOAuthState(value) {
+  try {
+    sessionStorage.setItem(GOOGLE_OAUTH_STATE_KEY, JSON.stringify(value));
+  } catch {
+    localStorage.setItem(GOOGLE_OAUTH_STATE_KEY, JSON.stringify(value));
+  }
+}
+
+function readGoogleOAuthState() {
+  try {
+    return JSON.parse(
+      sessionStorage.getItem(GOOGLE_OAUTH_STATE_KEY) ||
+      localStorage.getItem(GOOGLE_OAUTH_STATE_KEY) ||
+      "null"
+    );
+  } catch {
+    return null;
+  }
+}
+
+function clearGoogleOAuthState() {
+  try {
+    sessionStorage.removeItem(GOOGLE_OAUTH_STATE_KEY);
+  } catch {
+    // Ignora bloqueio do armazenamento de sessao.
+  }
+  try {
+    localStorage.removeItem(GOOGLE_OAUTH_STATE_KEY);
+  } catch {
+    // Ignora bloqueio do armazenamento local.
+  }
+}
+
+function decodeGoogleIdTokenPayload(idToken) {
+  const payload = String(idToken || "").split(".")[1] || "";
+  const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=");
+  return JSON.parse(decodeURIComponent(escape(window.atob(padded))));
+}
+
+function startGoogleOAuthRedirect() {
+  const clientId = String(AUTH_CONFIG.googleClientId || "").trim();
+  if (!clientId) {
+    showToast("Cliente OAuth do Google nao configurado.");
+    return;
+  }
+
+  const stateValue = createOAuthRandomValue();
+  const nonce = createOAuthRandomValue();
+  saveGoogleOAuthState({ state: stateValue, nonce });
+
+  const params = new URLSearchParams({
+    client_id: clientId,
+    redirect_uri: `${window.location.origin}/`,
+    response_type: "id_token",
+    scope: "openid email profile",
+    nonce,
+    state: stateValue,
+    prompt: "select_account",
+  });
+
+  window.location.assign(`https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`);
+}
+
+async function completeGoogleOAuthRedirect() {
+  const params = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+  const idToken = params.get("id_token");
+  const oauthError = params.get("error");
+
+  if (!idToken && !oauthError) {
+    return false;
+  }
+
+  window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+
+  if (oauthError) {
+    clearGoogleOAuthState();
+    throw new Error(`Google OAuth: ${oauthError}`);
+  }
+
+  const saved = readGoogleOAuthState();
+  const returnedState = params.get("state");
+  if (!saved || !returnedState || saved.state !== returnedState) {
+    clearGoogleOAuthState();
+    throw new Error("Estado OAuth do Google invalido.");
+  }
+
+  const payload = decodeGoogleIdTokenPayload(idToken);
+  if (!payload.nonce || payload.nonce !== saved.nonce) {
+    clearGoogleOAuthState();
+    throw new Error("Nonce OAuth do Google invalido.");
+  }
+
+  const credential = window.firebase.auth.GoogleAuthProvider.credential(idToken);
+  await state.auth.firebaseAuth.signInWithCredential(credential);
+  clearGoogleOAuthState();
+  state.auth.guestUser = null;
+  persistGuestSession(null);
+  showToast("Login realizado com sucesso.");
+  return true;
+}
+
 async function signInWithProvider(providerName) {
   if (!state.auth.isConfigured || !state.auth.firebaseAuth || !window.firebase?.auth) {
     showToast("Preencha o auth-config.js para ativar o login social.");
     return;
   }
 
+  if (providerName === "google") {
+    startGoogleOAuthRedirect();
+    return;
+  }
+
   const providerFactories = {
-    google: () => new window.firebase.auth.GoogleAuthProvider(),
     facebook: () => new window.firebase.auth.FacebookAuthProvider(),
     github: () => new window.firebase.auth.GithubAuthProvider(),
   };
@@ -950,10 +1063,6 @@ async function signInWithProvider(providerName) {
 
   try {
     provider = providerFactory();
-    if (providerName === "google") {
-      provider.setCustomParameters({ prompt: "select_account" });
-    }
-
     await state.auth.firebaseAuth.signInWithPopup(provider);
     state.auth.guestUser = null;
     persistGuestSession(null);
@@ -1172,6 +1281,11 @@ function initFirebaseAuth() {
         }
       }
       syncAuthShell();
+    });
+
+    completeGoogleOAuthRedirect().catch((error) => {
+      console.error(error);
+      showToast(getReadableAuthError(error));
     });
   } catch (error) {
     console.error(error);
