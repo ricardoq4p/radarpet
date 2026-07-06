@@ -889,6 +889,10 @@ function getReadableAuthError(error) {
 
 function shouldFallbackToRedirect(error) {
   const code = String(error?.code || "");
+  if (!code) {
+    return true;
+  }
+
   return [
     "popup-blocked",
     "operation-not-supported-in-this-environment",
