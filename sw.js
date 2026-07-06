@@ -1,4 +1,4 @@
-const CACHE_NAME = "radarpet-app-v14";
+const CACHE_NAME = "radarpet-app-v15";
 const APP_SHELL = [
   "./",
   "index.html",
@@ -50,6 +50,14 @@ self.addEventListener("fetch", (event) => {
   // native network/error behavior. Returning app HTML for them breaks images
   // and authentication scripts with an invalid MIME type.
   if (requestUrl.origin !== self.location.origin) {
+    return;
+  }
+
+  const isFirebaseAuthHelper =
+    requestUrl.pathname.startsWith("/__/auth/") ||
+    requestUrl.pathname.startsWith("/__/firebase/");
+
+  if (isFirebaseAuthHelper) {
     return;
   }
 
