@@ -876,7 +876,7 @@ function getReadableAuthError(error) {
     return "O popup de login foi fechado antes da autenticacao.";
   }
   if (code.includes("popup-blocked")) {
-    return "Seu navegador bloqueou o popup de login. Libere popups e tente de novo.";
+    return "Seu navegador bloqueou o popup de login.";
   }
   if (code.includes("operation-not-allowed")) {
     return "Esse provedor ainda nao foi ativado no Firebase.";
@@ -884,7 +884,18 @@ function getReadableAuthError(error) {
   if (code.includes("unauthorized-domain")) {
     return "Adicione este dominio na lista autorizada do Firebase Authentication.";
   }
-  return "Nao foi possivel concluir o login agora.";
+  return `Nao foi possivel concluir o login agora${code ? ` (${code})` : "."}`;
+}
+
+function shouldFallbackToRedirect(error) {
+  const code = String(error?.code || "");
+  return [
+    "popup-blocked",
+    "operation-not-supported-in-this-environment",
+    "web-storage-unsupported",
+    "cancelled-popup-request",
+    "internal-error",
+  ].some((fallbackCode) => code.includes(fallbackCode));
 }
 
 async function signInWithProvider(providerName) {
@@ -917,6 +928,21 @@ async function signInWithProvider(providerName) {
     showToast("Login realizado com sucesso.");
   } catch (error) {
     console.error(error);
+
+    if (shouldFallbackToRedirect(error)) {
+      try {
+        sessionStorage.setItem("radarpet_auth_provider", providerName);
+        showToast("Popup bloqueado. Redirecionando para o login...");
+        await state.auth.firebaseAuth.signInWithRedirect(provider);
+        return;
+      } catch (redirectError) {
+        console.error(redirectError);
+        sessionStorage.removeItem("radarpet_auth_provider");
+        showToast(getReadableAuthError(redirectError));
+        return;
+      }
+    }
+
     showToast(getReadableAuthError(error));
   }
 }
