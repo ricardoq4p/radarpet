@@ -946,8 +946,10 @@ async function signInWithProvider(providerName) {
     return;
   }
 
+  let provider;
+
   try {
-    const provider = providerFactory();
+    provider = providerFactory();
     if (providerName === "google") {
       provider.setCustomParameters({ prompt: "select_account" });
     }
