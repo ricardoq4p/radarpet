@@ -884,7 +884,33 @@ function getReadableAuthError(error) {
   if (code.includes("unauthorized-domain")) {
     return "Adicione este dominio na lista autorizada do Firebase Authentication.";
   }
-  return `Nao foi possivel concluir o login agora${code ? ` (${code})` : "."}`;
+  const detail = code || String(error?.name || error?.message || "").trim();
+  const safeDetail = detail.slice(0, 120);
+  return `Nao foi possivel concluir o login agora${safeDetail ? ` (${safeDetail})` : "."}`;
+}
+
+function getPendingAuthProvider() {
+  try {
+    return sessionStorage.getItem("radarpet_auth_provider") || "";
+  } catch {
+    return "";
+  }
+}
+
+function setPendingAuthProvider(providerName) {
+  try {
+    sessionStorage.setItem("radarpet_auth_provider", providerName);
+  } catch {
+    // O redirecionamento ainda pode funcionar sem este indicador auxiliar.
+  }
+}
+
+function clearPendingAuthProvider() {
+  try {
+    sessionStorage.removeItem("radarpet_auth_provider");
+  } catch {
+    // Ignora navegadores que bloqueiam armazenamento de sessao.
+  }
 }
 
 function shouldFallbackToRedirect(error) {
@@ -935,13 +961,13 @@ async function signInWithProvider(providerName) {
 
     if (shouldFallbackToRedirect(error)) {
       try {
-        sessionStorage.setItem("radarpet_auth_provider", providerName);
+        setPendingAuthProvider(providerName);
         showToast("Popup bloqueado. Redirecionando para o login...");
         await state.auth.firebaseAuth.signInWithRedirect(provider);
         return;
       } catch (redirectError) {
         console.error(redirectError);
-        sessionStorage.removeItem("radarpet_auth_provider");
+        clearPendingAuthProvider();
         showToast(getReadableAuthError(redirectError));
         return;
       }
@@ -1128,8 +1154,8 @@ function initFirebaseAuth() {
     state.auth.firebaseAuth.setPersistence(window.firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
     state.auth.firebaseAuth.getRedirectResult().catch((error) => {
       console.error(error);
-      if (sessionStorage.getItem("radarpet_auth_provider")) {
-        sessionStorage.removeItem("radarpet_auth_provider");
+      if (getPendingAuthProvider()) {
+        clearPendingAuthProvider();
         showToast(getReadableAuthError(error));
       }
     });
@@ -1138,8 +1164,8 @@ function initFirebaseAuth() {
       if (state.auth.user) {
         state.auth.guestUser = null;
         persistGuestSession(null);
-        if (sessionStorage.getItem("radarpet_auth_provider")) {
-          sessionStorage.removeItem("radarpet_auth_provider");
+        if (getPendingAuthProvider()) {
+          clearPendingAuthProvider();
           showToast("Login realizado com sucesso.");
         }
       }
