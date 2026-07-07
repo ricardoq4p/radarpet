@@ -9,7 +9,8 @@ window.RADARPET_AUTH_CONFIG = {
   googleClientId: "512204788210-dc5vbmdcoeqmcskrbcaat8n6i7fvj3qr.apps.googleusercontent.com",
   providers: {
     google: true,
-    facebook: true,
-    github: true,
+    email: true,
+    facebook: false,
+    github: false,
   },
 };
