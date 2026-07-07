@@ -1,4 +1,4 @@
-const CACHE_NAME = "radarpet-app-v19";
+const CACHE_NAME = "radarpet-app-v20";
 const APP_SHELL = [
   "./",
   "index.html",
@@ -7,6 +7,7 @@ const APP_SHELL = [
   "style.css",
   "app.js?v=19",
   "auth-config.js?v=19",
+  "email-auth.js",
   "manifest.json",
   "data/pets.json",
   "data/ongs.json",
