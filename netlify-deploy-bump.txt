@@ -1,0 +1,2 @@
+Deploy bump para republicar a tela de login com Google e e-mail.
+Atualizado em 2026-07-07.
