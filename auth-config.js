@@ -110,7 +110,98 @@ window.RADARPET_AUTH_CONFIG = {
     }
   }
 
+  function ensureEmailStyles() {
+    if (document.getElementById("radarpet-email-auth-styles")) {
+      return;
+    }
+
+    const style = document.createElement("style");
+    style.id = "radarpet-email-auth-styles";
+    style.textContent = `
+      .auth-divider {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #b96a37;
+        font-size: 11px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
+      .auth-divider::before,
+      .auth-divider::after {
+        content: "";
+        height: 1px;
+        flex: 1;
+        background: #ffd4b5;
+      }
+      .email-auth-form {
+        display: grid;
+        gap: 10px;
+      }
+      .email-auth-form label {
+        display: grid;
+        gap: 5px;
+        color: #2d2d2d;
+        font-size: 11px;
+        font-weight: 900;
+      }
+      .email-auth-form input {
+        width: 100%;
+        border: 1.5px solid #ffd4b5;
+        border-radius: 16px;
+        background: white;
+        color: #2d2d2d;
+        padding: 12px 14px;
+        outline: none;
+        font: inherit;
+        font-size: 14px;
+        font-weight: 800;
+      }
+      .email-auth-form input:focus {
+        border-color: #ffbf93;
+        box-shadow: 0 0 0 3px rgba(255, 122, 47, 0.12);
+      }
+      .email-auth-submit {
+        justify-content: center;
+        background: linear-gradient(135deg, #ff7a2f, #ff9854);
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 10px 24px rgba(255, 122, 47, 0.18);
+      }
+      .email-auth-create {
+        width: 100%;
+        border: 1.5px solid #ffd4b5;
+        border-radius: 18px;
+        padding: 12px 14px;
+        background: #fff3ea;
+        color: #ff7a2f;
+        font-family: "Nunito", sans-serif;
+        font-size: 13px;
+        font-weight: 900;
+        cursor: pointer;
+      }
+      .email-auth-submit:disabled,
+      .email-auth-create:disabled {
+        opacity: 0.65;
+        cursor: wait;
+      }
+      .email-auth-message {
+        min-height: 18px;
+        color: #8a4b22;
+        font-size: 11px;
+        font-weight: 800;
+        line-height: 1.45;
+      }
+      .email-auth-message[data-type="error"] { color: #dc2626; }
+      .email-auth-message[data-type="success"] { color: #16a34a; }
+    `;
+    document.head.appendChild(style);
+  }
+
   function injectEmailForm() {
+    ensureEmailStyles();
+
     document.querySelectorAll('[data-auth-provider="facebook"], [data-auth-provider="github"]').forEach((button) => {
       button.remove();
     });
