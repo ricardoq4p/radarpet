@@ -9,23 +9,22 @@ Configurar no Netlify:
 - `MONGODB_URI`
 - `MONGODB_DB`
 
-## Login social
+## Autenticacao
 
-O projeto agora possui uma tela de login pronta para Firebase Authentication com:
+O projeto exige uma conta autenticada para acessar o feed e publicar pets. As formas de acesso habilitadas sao:
 
 - Google
-- Facebook
-- GitHub
-- modo visitante para exploracao rapida
+- e-mail e senha
+
+Facebook, GitHub e o modo visitante estao desativados.
 
 ### Como ativar
 
 1. Crie um projeto no Firebase.
-2. Ative `Authentication`.
-3. Habilite os provedores `Google`, `Facebook` e `GitHub`.
-4. Em `Authentication > Settings > Authorized domains`, adicione o dominio do Netlify e o dominio local usado no desenvolvimento.
-5. Preencha o arquivo `auth-config.js` com as credenciais do app web do Firebase.
-6. Se usar Facebook ou GitHub, cadastre no console de cada provedor a URL de callback mostrada pelo Firebase.
+2. Em `Authentication`, habilite os provedores `Google` e `Email/Password`.
+3. Em `Authentication > Settings > Authorized domains`, adicione o dominio do Netlify e o dominio local usado no desenvolvimento.
+4. Preencha o arquivo `auth-config.js` com as credenciais publicas do app web do Firebase e o ID do cliente OAuth do Google.
+5. Mantenha `providers.google` e `providers.email` como `true`.
 
 ### Arquivo de configuracao
 
@@ -40,10 +39,12 @@ window.RADARPET_AUTH_CONFIG = {
     appId: "SEU_APP_ID",
     messagingSenderId: "SEU_MESSAGING_SENDER_ID",
   },
+  googleClientId: "SEU_CLIENT_ID.apps.googleusercontent.com",
   providers: {
     google: true,
-    facebook: true,
-    github: true,
+    email: true,
+    facebook: false,
+    github: false,
   },
 };
 ```
@@ -74,7 +75,7 @@ Com isso, cada novo `git push` no `main` dispara um novo deploy automaticamente.
 
 ## Fluxo de persistencia
 
-1. O usuario entra com uma conta social ou no modo visitante.
+1. O usuario entra com Google ou com e-mail e senha.
 2. O frontend envia a imagem para o Cloudinary.
 3. O Cloudinary devolve a `fotoUrl`.
 4. O frontend envia os dados do pet para a Function `create-pet`.
